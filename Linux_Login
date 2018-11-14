@@ -10,14 +10,14 @@ The value for  $HOME, $USER, $SHELL, $PATH, $LOGNAME, and $MAIL are set accordin
 
 $PATH defaults to /usr/local/bin:/bin:/usr/bin for normal users, 
 and to /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin for root if not other configured.
- 
- 
- Then the user's shell is started, /bin/sh is used as default. 
- 
- 
+
+Then the user's shell is started, /bin/sh is used as default. 
  
 PATH=$PATH:$HOME/bin
 export PATH
 
 export PATH="$PATH:/path/to/dir"
 https://unix.stackexchange.com/questions/227989/complete-view-of-where-the-path-variable-is-set-in-bash 
+
+PATH=$(getconf PATH): To reset the PATH 
+https://askubuntu.com/questions/113419/how-can-i-reset-path-to-its-default-value-in-ubuntu
