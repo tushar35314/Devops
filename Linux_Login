@@ -1,0 +1,22 @@
+Linux Login
+--------------
+
+login is used when signing onto a system. 
+The user and group ID will be set according to their values in the /etc/passwd file
+There is one exception if the user ID is zero: in this case, only the primary group ID of the account is set.
+This should allow the system adminitrator to login even in case of network problems
+
+The value for  $HOME, $USER, $SHELL, $PATH, $LOGNAME, and $MAIL are set according to the appropriate fields in the password entry.
+
+$PATH defaults to /usr/local/bin:/bin:/usr/bin for normal users, 
+and to /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin for root if not other configured.
+ 
+ 
+ Then the user's shell is started, /bin/sh is used as default. 
+ 
+ 
+ 
+PATH=$PATH:$HOME/bin
+export PATH
+
+export PATH="$PATH:/path/to/dir"
