@@ -21,3 +21,8 @@ https://unix.stackexchange.com/questions/227989/complete-view-of-where-the-path-
 
 PATH=$(getconf PATH): To reset the PATH 
 https://askubuntu.com/questions/113419/how-can-i-reset-path-to-its-default-value-in-ubuntu
+
+TO VERIFY INSTALLED SOFTWARE
+------------------------------
+Redhat/CentOs/Linux : rpm -qa | less
+Ubuntun: sudo dpkg --get-selections
