@@ -20,3 +20,4 @@ PATH=$PATH:$HOME/bin
 export PATH
 
 export PATH="$PATH:/path/to/dir"
+https://unix.stackexchange.com/questions/227989/complete-view-of-where-the-path-variable-is-set-in-bash 
