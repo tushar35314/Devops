@@ -26,3 +26,9 @@ TO VERIFY INSTALLED SOFTWARE
 ------------------------------
 Redhat/CentOs/Linux : rpm -qa | less
 Ubuntun: sudo dpkg --get-selections
+
+To Add Java Path (in .bashrc )
+-------------------------------
+export JAVA_HOME=/home/trisha/devops/Java/jdk11
+PATH=$JAVA_HOME/bin:$PATH 
+export PATH
