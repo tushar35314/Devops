@@ -1,0 +1,108 @@
+Amazon Machine Images (AMI)
+-----------------------------
+An Amazon Machine Image (AMI) provides the information required to launch an instance, which is a virtual server in the cloud. 
+You can launch multiple instances from a single AMI when you need multiple instances with the same configuration.
+
+An AMI includes the following:
+- A template for the root volume for the instance (for example, an operating system, an application server, and applications)
+- Launch permissions that control which AWS accounts can use the AMI to launch instances
+- A block device mapping that specifies the volumes to attach to the instance when it's launched
+
+After you create and register an AMI, you can use it to launch new instances. You can copy an AMI within the same region or to different regions. 
+
+Lunch Permission
+-----------------
+The owner of an AMI determines its availability by specifying launch permissions. Launch permissions fall into the following categories.
+- public: The owner grants launch permissions to all AWS accounts.
+- explicit: The owner grants launch permissions to specific AWS accounts.
+- implicit: The owner has implicit launch permissions for an AMI.
+
+Storage for the Root Device
+---------------------------
+All AMIs are categorized as either backed by Amazon EBS or backed by instance store. 
+
+
+Linux AMI Visualization Types
+--------------------------------
+- paravirtual (PV)
+- hardware virtual machine (HVM)
+
+HVM AMIS
+--------
+HVM AMIs are present with a fully visualized set of of hardware and boot by executing the master boot record of the root block device of your image. 
+This visualization type provides the ability to run an operating system directly on top of a virtual machine without any modification, as if it were run on the bare-metal hardware.
+HVM guests can take advantage of hardware extensions that provide fast access to the underlying hardware on the host system.
+All instance types support HVM AMIs
+
+PV AMIs
+--------
+PV AMIs boot with a special boot loader called PV-GRUB, which starts the boot cycle and then chain loads the kernel specified in the menu.lst file on your image.
+Paravirtual guests can run on host hardware that does not have explicit support for virtualization, but they cannot take advantage of special hardware extensions such as enhanced networking or GPU processing.
+
+Finding a Linux AMIs
+----------------------
+Consider the following requirements before choosing the AMIs
+- The region
+- The operating system
+- The architecture: 32-bit (i386) or 64-bit (x86_64)
+- The root device type: Amazon EBS or instance store
+- The provider (for example, Amazon Web Services)
+- Additional software (for example, SQL server)
+
+Creating an Amazon EBS-Backed Linux AMI
+----------------------------------------
+To create an Amazon EBS-backed Linux AMI, start from an instance that you've launched from an existing Amazon EBS-backed Linux AMI.
+During the AMI-creation process, Amazon EC2 creates snapshots of your instance's root volume and any other EBS volumes attached to your instance.
+
+- Select an appropriate EBS-backed AMI to serve as a starting point for your new AMI, and configure it as needed before launch
+- Choose Launch to launch an instance of the EBS-backed AMI that you've selected
+- Create snapshots of all the volumes attached to your instance
+- In the navigation pane,choose Instances, select your instance, and then choose Actions, Image
+
+Visualization Types
+---------------------
+The virtualization type of your instance is determined by the AMI that you use to launch it.
+- hardware virtual machine (HVM)	Used by current generation
+- paravirtual (PV)	Previous generation
+
+HVM AMIs are required to take advantage of enhanced networking. HVM virtualization uses hardware-assist technology provided by the AWS platform.
+
+Networking and Storage Features
+--------------------------------
+By launching an instance in a VPC, you can leverage features that are not available in EC2-Classic, such as enhanced networking, assigning multiple private IPv4 addresses to an instance, assigning IPv6 addresses to an instance, and changing the security groups assigned to an instance
+
+Storage features
+----------------
+Some instance types support EBS volumes and instance store volumes, while other instance types support only EBS volumes.
+
+Burstable Performance Instances
+---------------------------------
+Burstable performance instances are designed to provide a baseline level of CPU performance with the ability to burst to a higher level when required by your workload
+
+
+Instance Life Cycle
+---------------------
+Notice that you can't stop and start an instance store-backed instance.
+
+- Instance Lunch
+	- When you launch an instance, it enters the pending state.
+	- The instance type that you specified at launch determines the hardware of the host computer for your instance
+	- We use the Amazon Machine Image (AMI) you specified at launch to boot the instance
+	- After the instance is ready for you, it enters the running state.
+	
+- Instance Stop and Start (Amazon EBS-Backed Instances Only)
+	- When you stop your instance, it enters the stopping state, and then the stopped state
+	- Charged for storage for any Amazon EBS volumes
+	- While your instance is in the stopped state, you can modify certain attributes of the instance, including the instance type.
+	- When you start your instance, it enters the pending state, and in most cases, we move the instance to a new host computer.
+	- If your instance is running in EC2-Classic, it receives a new private IPv4 address, which means that an Elastic IP address associated  with the private IPv4 address is no longer associated with your instance.
+	- If your instance is running in EC2-VPC, it retains its private IPv4 address, which means that an Elastic
+	- IP address associated with the private IPv4 address or network interface is still associated with your instance.
+	- If your instance has an IPv6 address, it retains its IPv6 address.
+- Instance Reboot
+	- Rebooting an instance is equivalent to rebooting an operating system; the instance remains on the same host computer and maintains its public DNS name, private IP address, and any data on its instance store volumes
+- Instance Retirement
+	- An instance is scheduled to be retired when AWS detects irreparable failure of the underlying hardware hosting the instance.
+	- When an instance reaches its scheduled retirement date, it is stopped or terminated by AWS
+	- If your instance root device is an Amazon EBS volume, the instance is stopped, and you can start it again at any time.
+	- If your instance root device is an instance store volume, the instance is terminated, and cannot be used again.
