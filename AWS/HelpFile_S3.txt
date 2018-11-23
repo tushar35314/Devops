@@ -1,0 +1,44 @@
+Amazon  Simple Storage Service (S3)
+------------------------------------
+
+Amazon S3 stores data as objects within buckets. An object consists of a file and optionally any metadata that describes that file.
+To store an object in Amazon S3, you upload the file you want to store to a bucket. When you upload a file, you can set permissions on the object as well as any metadata
+
+Buckets are the containers for objects.You can have one or more buckets. For each bucket, you can control access to it, view access logs for it and its objects, and choose the geographical region where Amazon S3 will store the bucket and its contents.
+
+To sign up for Amazon S3
+- Log into https://aws.amazon.com/s3/
+- Follow the on screen instruction
+	Create a bucket (tusharanjali87bck1)
+		In the Bucket name field, type a unique DNS-compliant name for your new bucket. 
+		Select the region on which the bucket needs to be created. 
+	Add an Object to a Bucket
+		In the Bucket name list, choose the name of the bucket that you want to upload your object to
+		Choose upload
+		Add file/ create folder
+		Choose a file to upload
+	View an object
+		In the Bucket name list, choose the name of the bucket that you created
+		In the Name list, select the check box next to the object that you uploaded, and then choose Download on the object overview panel.
+	Move an Object
+		In the Bucket name list, choose the name of the bucket that you created
+		Choose Create Folder, type favorite-pics for the folder name, choose None for the encryption setting for the folder object and then choose Save.
+		In the Name list, select the check box next to the object that you want to copy, choose More, and then choose Copy.
+		In the Name list, choose the name of the folder favorite-pics.
+		Choose More, and then choose Paste.
+		Choose paste
+	Delete an Object and Bucket
+		In the Bucket name list, choose the name of the bucket that you want to delete an object from.
+		In the Name list, select the check box next to the object that you want to delete, choose More, and then choose Delete
+	To empty a bucket
+		In the Bucket name list, choose the bucket icon next to the name of the bucket that you want to empty and then choose Empty bucket.
+		In the Empty bucket dialog box, type the name of the bucket for confirmation and then choose Confirm.
+
+Create a bucket
+---------------
+Every object in Amazon S3 is stored in a bucket. You are not charged for creating a bucket; you are charged only for storing objects in the
+bucket and for transferring objects in and out of the bucket. 
+
+Every object is contained in a bucket. For example, if the object named photos/puppy.jpg is stored in the johnsmith bucket, then it is
+addressable using the URL http://johnsmith.s3.amazonaws.com/photos/puppy.jpg
+

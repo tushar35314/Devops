@@ -1,0 +1,189 @@
+Amazon EC2
+===========
+
+Amazon Elastic Compute Cloud (Amazon EC2) provides scalable computing capacity in the Amazon Web Services (AWS) cloud.
+
+- Virtual computing environments are known as instances
+- Preconfigured templates for your instances, known as Amazon Machine Images (AMIs)
+- Storage volumes for temporary data that's deleted when you stop or terminate your instance, known as instance store volumes
+- Persistent storage volumes for your data using Amazon Elastic Block Store (Amazon EBS), known as Amazon EBS volumes 
+- Static IPv4 addresses for dynamic cloud computing, known as Elastic IP addresses
+
+AMIs & Instance
+----------------
+An Amazon Machine Image (AMI) is a template that contains a software configuration (for example, an operating system, an application server, and applications). 
+
+From an AMI, you launch an instance, which is a copy of the AMI running as a virtual server in the cloud.
+
+
+Storage for Your Instance
+---------------------------
+The root device for your instance contains the image used to boot the instance. 
+Your instance may include local storage volumes, known as instance store volumes, which you can configure at launch time with block device mapping.
+After these volumes have been added to and mapped on your instance, they are available for you to mount and use. 
+If your instance fails, or if your instance is stopped or terminated, the data on these volumes is lost; therefore, these volumes are best used for temporary data
+
+To keep the data safe you must use replication strategy across multiple instances. Or use persistent data in Amazon S3.
+
+Security Best Practice
+-----------------------
+- Use AWS Identity and Access Management (IAM) to control access to your AWS resource
+- Restrict access by only allowing trusted hosts or networks to access ports on your instance.  
+- Review the rules in your security groups regularly, and ensure that you apply the principle of least privilege
+- Disable password-based logins for instances launched from your AMI. 
+
+When an instance is in a stopped state, you can attach or detach Amazon EBS volumes. You can also create an AMI from the instance, and you can change the kernel, RAM disk, and instance type. 
+
+When an instance is terminated, the instance performs a normal shutdown. The root device volume is deleted by default, but any attached Amazon EBS volumes are preserved by default, determined by each volume's deleteOnTermination attribute setting.
+
+All AMIs are categorized as either backed by Amazon EBS, or backed by instance store, ie root device is created from template stored in Amazon S3.
+
+Regions and Availability Zones
+-------------------------------
+Each region is a separate geographic area. 
+Each region has multiple, isolated locations known as Availability Zones.
+Each Availability Zone is isolated, but the Availability Zones in a region are connected through low-latency links.
+
+Migrating an Instance to Another Availability Zone
+----------------------------------------------------
+The migration process involves creating an AMI from the original instance, launching an instance in the new Availability Zone, and updating the configuration of the new instance. 
+
+- Create an AMI from the instance
+- If you need to preserve the private IPv4 address of the instance, you must delete the subnet in the current Availability Zone and then create a subnet in the new Availability Zone with the same IPv4 address range as the original subnet.
+- Note that you must terminate all instances in a subnet before you can delete it.
+- Lunch an instance from the AMI that you just created, specifying the new Availability Zone or subnet. 
+- You can use the same instance or select a new instance type. 
+- If the original instance has an associated Elastic IP address, associate it with the new instance.
+
+Amazon EC2 Root Device Volume (Pg: 13)
+---------------------------------------
+When you launch an instance, the root device volume contains the image used to boot the instance. When we introduced Amazon EC2, all AMIs were backed by Amazon EC2 instance store, ie volume created from template stored in S3. 
+
+Now we have Amazon AMIs backed by Amazon EBS. So now once can choose between AMIs backed by Amazon S3 or backed by Amazon EBS. 
+AMIs backed by Amazon EBS, lunch faster and user persistent storage. 
+
+The description of the AMIs will include which type of AMI it is. 
+
+Instance stored backed instance
+--------------------------------
+Instances that use instance stores for the root device automatically have one or more instance store volumes available, with one volume serving as the root device volume. 
+
+When an instance is launched, the image that is used to boot the instance is copied to the root volume. 
+Any data on the instance store volumes persists as long as the instance is running, but this data is deleted when the instance is terminated
+
+
+Amazon EBS backed instance
+---------------------------
+Instances that use Amazon EBS for the root device automatically have an Amazon EBS volume attached.
+When you launch an Amazon EBS-backed instance, we create an Amazon EBS volume for each Amazon EBS snapshot referenced by the AMI you use.
+There are various instance– and volume-related tasks you can do when an Amazon EBS-backed instance is in a stopped state.
+
+Determining the Root Device Type of Your Instance
+--------------------------------------------------
+- Open the Amazon EC2
+- In the navigation pane, choose Instances and select the instance
+- Check the value of Root Device Type in the Description tab as follows
+	- If the value is ebs, this is an Amazon EBS-backed instance
+	- If the value is instance store, this is an instance stored-backed instance. 
+
+Changing the root device volume to persistent
+----------------------------------------------
+To change the default behavior, set the DeleteOnTermination attribute to false using a block device mapping.
+
+Create a IAM user for yourself and add the user to the Admin Group
+-------------------------------------------------------------------
+- Log in using your AWS account email and password
+- In the navigation pane of the console, choose Users, and then choose Add user.
+- For User name, type Administrator
+- Select the check box next to AWS Management Console access, select Custom password, and then type the new user's password in the text box.
+- Choose Next: Permissions and Set the Permission 
+- Add the user to the group, you can also create a group
+
+To sign in as this new IAM user, sign out of the AWS console, then use the following URL, where your_aws_account_id is your AWS account number
+
+Create a Key Pair
+------------------
+If you plan to launch instances in multiple regions, you'll need to create a key pair in each region.
+
+- Sign in to AWS
+- From AWS dashboard, choose EC2 to open Amazon Ec2 console
+- From the navigation bar, select the region wherein you want to create the keys
+- In the navigation pane, under NETWORK & SECURITY, choose Key Pairs
+- Enter a name for the new key pair in the Key pair name field of the Create Key Pair dialog box, and then choose Create.
+- The private key file is automatically downloaded by your browser, with an extension .pem. 
+
+To connect to your instance using key-pair
+-------------------------------------------
+To connect to Linux, you need a file with .ppk extension. 
+
+- Download putty
+- Start PuTTYgen
+- Type of key to generate, choose RSA
+- Choose load and browse the .pem file
+- Save the private key as .ppk extension
+
+
+Create a Virtual Private Cloud
+---------------------------------
+Amazon VPC enables you to launch AWS resources into a virtual network that you've defined. 
+
+To create the non-default VPC
+- Open the amazon VPC console 
+- From the navigation bar, select a region for the VPC. 
+- On the VPC dashboard, choose Launch VPC Wizard.
+- On the Step 1: Select a VPC Configuration page, ensure that VPC with a Single Public Subnet is selected, and choose Select.
+- On the Step 2: VPC with a Single Public Subnet page, enter a friendly name for your VPC in the VPC name field.
+- Leave the other default configuration settings, and choose Create VPC. On the confirmation page, choose OK.
+
+
+Create a Security Group
+-------------------------
+Security groups act as a firewall for associated instances, controlling both inbound and outbound traffic at the instance level.
+Note that if you plan to launch instances in multiple regions, you'll need to create a security group in each region.
+
+- Open Amazon EC2 console
+- Select the region from the navigation bar
+- Choose Security Group in the navigation panel
+- Enter the name and description of the  security group
+- Select the VPC from the VPC list (Default is marked by *)
+- In the inbound create the rules to govern the inbound traffic rules
+
+
+CHAPTER 2: GETTING STARTED WITH AMAZON EC2 LINUX INSTANCE
+==========================================================
+
+To connect to your Linux instance using a web browser
+------------------------------------------------------
+- From the Amazon EC2 console, choose Instances in the navigation pane
+- Select a running instance and then choose connect
+- Choose A Java SSH client directly from my browser (Java required). 
+- Amazon EC2 automatically detects the public DNS name of your instance and populates Public DNS for you. It also detects the key pair that you specified when you launched the instance. Complete the following, and then choose Launch SSH Client.
+
+
+Tutorial: Configure Apache Web Server on Amazon Linux 2 to Use SSL/TLS
+------------------------------------------------------------------------
+Secure Sockets Layer/Transport Layer Security (SSL/TLS) creates an encrypted channel between a web server and web client that protects data in transit from being eavesdropped on.
+
+
+Step 1:Enable SSL/TLS on the Server
+- Connect to your instance & confirm that Apache is running	
+	$ sudo systemctl is-enabled httpd
+- add SSL/TLS support by installing the Apache module mod_ssl
+	$ sudo yum install -y mod_ssl
+
+	
+	
+Tutorial: Increase the Availability of Your Application on Amazon EC2
+-----------------------------------------------------------------------
+
+Scale and Load Balance Your Application
+----------------------------------------
+- Open Amazon EC2 console
+- On the navigation pane, under LOAD BALANCING, choose Load Balancers.
+- Choose Create Load Balancer.
+- For Application Load Balancer, choose Create
+- 
+
+
+
+ 

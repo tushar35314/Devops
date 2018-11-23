@@ -1,0 +1,4 @@
+AWS Batch
+-----------
+AWS Batch enables you to run batch computing workloads on the AWS Cloud. 
+This service can efficiently provision resources in response to jobs submitted in order to eliminate capacity constraints, reduce compute costs, and deliver results quickly
