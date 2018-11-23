@@ -13,6 +13,8 @@ Jenkins: https://jenkins.io/doc/tutorials/
 Docker: https://docs.docker.com/get-started/
 
 Kubernetes: https://kubernetes.io/docs/tutorials/
+
 Minikube: https://github.com/kubernetes/minikube
           https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/
 
+Linux IP Networking: https://www.cs.unh.edu/cnrg/people/gherrin/linux-net.html 
