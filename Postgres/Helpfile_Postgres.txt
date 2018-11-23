@@ -1,0 +1,36 @@
+https://www.postgresql.org/docs/10/static/intro-whatis.html
+
+PostgreSQL is an object-relational database management system (ORDBMS).
+A PostgreSQL session consists of the following cooperating processes
+
+- A server process, which manages the database files, accepts connections to the database from client applications, and performs database actions on behalf of the clients
+
+- The user's client (frontend) application that wants to perform database operations.
+
+The PostgreSQL server can handle multiple concurrent connections from clients. To achieve this it starts (“forks”) a new process for each connection. From that point on, the client and the new server process communicate without intervention by the original postgres process. 
+
+Command to create database: $ createdb mydb
+Command to remove the database: $ dropdb mydb
+
+Running the PostgreSQL interactive terminal program, called psql, which allows you to interactively enter, edit, and execute SQL commands.
+
+Run psql, to start the interactive session. 
+
+To display the version: SELECT version();
+To display the Current Date: SELECT current_date;
+
+There are a variety of PostgreSQL Internal command that start with '\'. For example to list of the syntax of the various SQL command : \h
+To quit the interactive session: \q
+To connect to a database named cfmponitdb: \c cfmponitdb
+To list the available tables: \dt
+To describe the table : \d
+
+Select Statement
+-------------------
+SELECT * FROM account;	//Without the ; the statement will not execute
+
+
+
+Two dashes (“--”) introduce comments.
+
+PostgreSQL supports the standard SQL types int, smallint, real, double precision, char(N), varchar(N), date, time, timestamp, and interval, as well as other types of general utility and a rich set of geometric types.
