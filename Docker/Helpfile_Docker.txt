@@ -1,0 +1,204 @@
+Dockerfile:
+-----------
+- Defines what goes on in the environment inside your container.
+- Access to resources like networking interfaces and disk drives is virtualized inside this environment, which is isolated from the rest of your system, so you need to map ports to the outside world, and be specific about what files you want to “copy in” to that environment
+
+Example of a docker file
+--------------------------
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+
+This Dockerfile refers to a couple of files we haven’t created yet, namely app.py and requirements.txt
+-  Let's create these two files and put them in the same folder with Docekerfile
+
+requirment.txt
+---------------
+Flask
+Redis
+
+app.py
+-------
+from flask import Flask
+from redis import Redis, RedisError
+import os
+import socket
+
+# Connect to Redis
+redis = Redis(host="redis", db=0, socket_connect_timeout=2, socket_timeout=2)
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    try:
+        visits = redis.incr("counter")
+    except RedisError:
+        visits = "<i>cannot connect to Redis, counter disabled</i>"
+
+    html = "<h3>Hello {name}!</h3>" \
+           "<b>Hostname:</b> {hostname}<br/>" \
+           "<b>Visits:</b> {visits}"
+    return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname(), visits=visits)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=80)
+	
+
+	
+To build the application: 
+--------------------------------
+docker build -t friendlyhello .			-t: To provide user friendly name, '.' is important at the end of the line
+
+To run the application
+------------------------
+docker run -p 4000:80 friendlyhello		-p: mapping your machine’s port 4000 to the container’s published port 80
+
+http://localhost:4000
+
+docker run -d -p 4000:80 friendlyhello	-d: To run the process in background
+docker container stop 1fa4ab2cf395			: To end the process using the container Id
+
+
+A registry is a collection of repositories, and a repository is a collection of images
+
+Create an account in docker hub: hub.docker.com
+
+Log in to the Docker public registry on your local machine: $ docker login
+The notation for associating a local image with a repository on a registry is username/repository:tag: docker tag image username/repository:tag
+
+Example: docker tag friendlyhello gordon/get-started:part2
+
+Run the docker image command to check the newly created docker image: $ docker image ls
+
+Publish the image: docker push username/repository:tag
+
+Pull the image from remote repository: docker run -p 4000:80 username/repository:tag
+
+
+Docker part 3: Scaling up the application
+------------------------------------------
+
+In a distributed application, different pieces of the app are called “services.”
+A docker-compose.yml file is a YAML file that defines how Docker containers should behave in production environment. 
+
+Example of the docker-compose.yml
+------------------------------------
+
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: username/repo:tag
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "4000:80"
+    networks:
+      - webnet
+networks:
+  webnet:
+  
+The docker-compose file tells the docker to execute the following
+- Pull the image from the repository
+- Run 5 instance of that image as service called 'web'
+- Immediately restart containers if one fails.
+- Map port 4000 on the host to web’s port 80
+- Instruct web’s containers to share port 80 via a load-balanced network called webnet
+
+Run your new load balance app: docker swarm init
+To deploy your app: docker stack deploy -c docker-compose.yml getstartedlab
+
+Get the service ID for the one service in our application: docker service ls
+
+Look for output for the 'web' service, prepended with your app name. In this example it will be  getstartedlab_web
+
+A single container running in a service is called a task. List the tasks for your service:docker service ps getstartedlab_web
+
+Scale up the application
+--------------------------
+
+You can scale up the application by modifying the replicas in docker compose file and re-running the deploy code: docker stack deploy -c docker-compose.yml getstartedlabs
+
+
+To remove the stack: docker stack rm getstartedlab
+To remove the swarm: docker swarm leave --force
+
+
+Docker Swarms
+---------------
+A swarm is a group of machines that are running Docker and joined into a cluster. Once done the docker commands on a cluster maintained by the swarm manager. 
+The machines in the cluster can be physical or virtual, after joining the swarm they are called as nodes. 
+You can instruct the swarm manager to implement strategies (to manage load) in the compose file. Swarm managers are the only machne that can execute the the dokcer commands. 
+
+
+Run the command 'docker swarm init' to enable swarm mode and maake your current machine as the swarm manager. Then run the command 'docker swarm join' on the mahines to be aadded to the cluster. 
+
+Demonstration of Docker Swarm
+-------------------------------
+
+Let's create a cpuple of docker machines
+
+- docker-machine create --driver virtualbox myvm1
+- docker-machine create --driver virtualbox myvm2
+
+List the VMs ange get their IPs
+---------------------------------
+docker-machine ls
+
+Initialize Swarm and add Nodes
+------------------------------
+You can send commands to your VMs using docker-machine ssh. 
+$ docker-machine ssh myvm1 "docker swarm init --advertise-addr <myvm1 ip>"
+
+Instruct myvm1 to become a swarm manager. 
+
+To add a worked to the swarm : docker swarm join --token <token> <myvm ip>:<port>
+To add a manager to this swarm, run 'docker swarm join-token manager'
+
+Example 
+$ docker-machine ssh myvm2 "docker swarm join --token <token> <ip>:2377"
+
+Now when we run the "docker ls" command on the manager
+$ docker-machine ssh myvm1 "docker node ls"
+
+To leave the swarm, you need to run the command 'docker swarm leave' from all the nodes. 
+
+
+Docker enables you to separate your applications from your infrastructure so you can deliver software quickly.
+Docker provides the ability to package and run an application in a loosely isolated environment called a container. 
+
+Docker Engine
+===============
+Docker Engine is a client-server application with these major components
+- A server which is a type of long-running program called a daemon proces
+- A REST API which specifies interfaces that programs can use to talk to the daemon and instruct it what to do.
+- A command line interface (CLI) client (the docker command).
+
+
+
+
+
