@@ -1,0 +1,24 @@
+Installation
+---------------
+Jenkins is typically run as a standalone application in its own process with the built-in Java servlet container/application server
+
+WAR
+----
+1. Download the latest stable Jenkins WAR file to an appropriate directory on your machine.
+2. Open up a terminal/command prompt window to the download directory.
+3. Run the command java -jar jenkins.war --httpPort=8080
+4. Browse to localhost:8080 and wait until the Unlock Jenkins page appears.
+
+Post Installation Steps
+---------------------------
+1: Browse to localhost:8080
+2: Use the auto-generated alpha numeric password to unlock the account. 
+3: There after you need to Customize the Jenkins page. 
+
+Jenkins Pipeline
+----------------
+Jenkins Pipeline (or simply "Pipeline") is a suite of plugins which supports implementing and integrating continuous delivery pipelines into Jenkins.
+
+A continuous delivery pipeline is an automated expression of your process for getting software from version control right through to your users and customers.
+
+Pipelines are made up of multiple steps that allow you to build, test and deploy applications.
