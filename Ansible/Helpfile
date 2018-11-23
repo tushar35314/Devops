@@ -1,0 +1,137 @@
+https://docs.ansible.com/ansible/2.5/user_guide/intro_getting_started.html
+
+Ansible is simple open source IT engine which automates application deployment, intra service orchestration, cloud provisioning and many other IT tools.
+
+Ansible uses playbook to describe automation jobs, and playbook uses very simple language i.e. YAML
+Ansible is completely agentless which means Ansible works by connecting your nodes through ssh(by default). 
+
+After connecting to your nodes, Ansible pushes small programs called as “Ansible Modules”. 
+Ansible runs that modules on your nodes and removes them when finished
+Ansible uses the hosts file where one can group the hosts and can control the actions on a specific group in the playbooks.
+
+Working Procedure
+--------------------
+Ansible works by connecting to your nodes and pushing out small programs, called "Ansible modules" to them.
+Ansible then executes these modules (over SSH by default), and removes them when finished. 
+Your library of modules can reside on any machine, and there are no servers, daemons, or databases required.
+
+The management node in the above picture is the controlling node (managing node) which controls the entire execution of the playbook. 
+It’s the node from which you are running the installation. 
+The inventory file provides the list of hosts where the Ansible modules needs to be run and the management node does a SSH connection and executes the small modules on the hosts machine and installs the product/software.
+
+Ansible - Environment Setup
+----------------------------
+Mainly, there are two types of machines when we talk about deployment 
+ - Control machine − Machine from where we can manage other machines.
+ - Remote machine − Machines which are handled/controlled by control machine.
+ 
+There can be multiple remote machines which are handled by one control machine. 
+Ansible can be run from any machine with Python 2 (versions 2.6 or 2.7) or Python 3 (versions 3.5 and higher) installed.
+
+Installation through Apt on Ubuntu Machine
+--------------------------------------------
+	$ sudo apt-get update 
+	$ sudo apt-get install software-properties-common 
+	$ sudo apt-add-repository ppa:ansible/ansible $ sudo apt-get update 
+	$ sudo apt-get install ansible
+	
+Ansible uses YAML for expressing Ansible playbooks
+Example: 
+		--- #Optional YAML start syntax 
+			james: 
+			   name: james john 
+			   rollNo: 34 
+			   div: B 
+			   sex: male 
+		… #Optional YAML end syntax
+		
+List inside directories
+------------------------
+
+---  
+james: 
+   name: james john 
+   rollNo: 34 
+   div: B 
+   sex: male 
+   likes: 
+      - maths 
+      - physics 
+      - english 
+… 
+
+List of Dictionaries
+----------------------
+
+---  
+- james: 
+   name: james john 
+   rollNo: 34 
+      div: B 
+   sex: male 
+   likes: 
+      - maths 
+      - physics 
+      - english 
+
+- robert: 
+      name: robert richardson 
+      rollNo: 53 
+      div: B 
+      sex: male 
+   likes: 
+      - biology 
+      - chemistry 
+…  
+
+To run reboot for all your company servers in a group, 'abc', in 12 parallel forks −
+$ Ansible abc -a "/sbin/reboot" -f 12
+
+Transferring file to many servers/machines
+$ Ansible abc -m copy -a "src = /etc/yum.conf dest = /tmp/yum.conf"
+
+Create a new directory
+$ Ansible abc -m file -a "dest = /path/user1/new mode = 777 owner = user1 group = user1 state = directory" 
+
+
+Playbook
+----------
+Playbooks are the files where Ansible code is written. Playbooks are written in YAML format.
+Playbooks contain the steps which the user wants to execute on a particular machine. 
+
+Each playbook is an aggregation of one or more plays in it. Playbooks are structured using Plays. 
+
+Sample Playbook
+-----------------
+--- 
+   name: install and configure DB
+   hosts: testServer
+   become: yes
+
+   vars: 
+      oracle_db_port_value : 1521
+   
+   tasks:
+   -name: Install the Oracle DB
+      yum: <code to install the DB>
+    
+   -name: Ensure the installed service is enabled and running
+   service:
+      name: <your service name>
+	  
+In Ansible, the role is the primary mechanism for breaking a playbook into multiple files. 
+Roles are small functionality which can be independently used but have to be used within playbooks.
+
+
+Role Structure
+---------------
+Roles have a structured layout on the file system. Each role is a directory tree in itself. 
+
+Creating a role
+$ ansible-galaxy init --force --offline vivekrole
+
+Utilizing Role in Playbook
+------------------------------
+
+
+Executing a Playbook: ansible-playbook aws_dynamic_build.yml
