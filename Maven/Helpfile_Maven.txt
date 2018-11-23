@@ -1,0 +1,158 @@
+The syntax for running Maven is as follows: mvn [options] [<goal(s)>] [<phase(s)>]
+The typical invocation for building a Maven project uses a Maven life cycle phase. 
+Eg: mvn package
+
+The built in life cycles and their phases are in order are:
+	1: clean : pre-clean, clean, post:clean
+	2: default: 
+		validate, ( validate the project is correct and all necessary information is available)
+		initialize, 
+		generate-sources, 
+		process-sources, 
+		generate-resources, 
+		process-resources, 
+		compile, (compile the source code of the project)
+		process-classes, 
+		generate-test-sources, 
+		process-test-sources, 
+		generate-test-resources, 
+		process-test-resources, 
+		test-compile, 
+		process-test-classes, 
+		test, (test the compiled source code using a suitable unit testing framework)
+		prepare-package, 
+		package, (take the compiled code and package it in its distributable format, such as a JAR.)
+		pre-integration-test, 
+		integration-test, 
+		post-integration-test, 
+		verify, (run any checks to verify the package is valid and meets quality criteria)
+		install, (install the package into the local repository, for use as a dependency in other projects locally)
+		deploy (copies the final package to the remote repository for sharing with other developers and projects.)
+	3: site : pre-site, site, post-site, site-deploy	
+	
+Maven Plugins
+--------------
+There are two prominent types of plugins
+- build plugins
+- reporting plugin
+
+Creating a project (https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
+-------------------
+mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false	
+
+mvn package
+-------------
+Rather than a goal, this is a phase. A phase is a step in the build lifecycle, which is an ordered sequence of phases. When a phase is given, Maven will execute every phase in the sequence up to and including the one defined. 
+
+Phases are actually mapped to underlying goals. Phases and goals may be executed in sequence.
+ex: mvn clean dependency:copy-dependencies package
+
+The default life cycle comprises of the following phase
+- validate
+- compile
+- test
+- package
+- verify
+- install
+- deploy
+
+A Build Phase is Made Up of Plugin Goals
+-------------------------------------------
+Plugin goals are bound to the build phase. 
+A plugin goal represents a specific task (finer than a build phase) which contributes to the building and managing of a project. It may be bound to zero or more build phases. 
+
+Plugins
+---------
+The second way to add goals to phases is to configure plugins in your project. Plugins are artifacts that provide goals to Maven. 
+For example, the Compiler plugin has two goals: compile and testCompile
+
+
+Generating a site: mvn site
+Deploying a site: 
+
+To be able to deploy the site, you must first declare a location to distribute to in your pom.xml
+<project>
+  ...
+  <distributionManagement>
+    <site>
+      <id>website</id>
+      <url>scp://www.mycompany.com/www/docs/project/</url>
+    </site>
+  </distributionManagement>
+  ...
+</project>
+
+
+Archetype
+----------
+Archetype is a Maven project templating toolkit. 
+To create a new project based on an Archetype, you need to call mvn archetype:generate goal: mvn archetype:generate
+Archetypes are packaged up in a JAR and they consist of the archetype metadata which describes the contents of archetype, and a set of Velocity templates which make up the prototype project
+
+
+Repository
+-----------
+A repository in Maven is used to hold build artifacts and dependencies of varying types.
+- Local
+- Remote
+
+The local and remote repositories are structured the same way so that scripts can easily be run on either side, or they can be synced for offline used.
+
+Downloading in Maven is triggered by a project declaring a dependency that is not present in the local repository. By default, Maven will download from the central repository. 
+
+Using internal repositories
+<project>
+  ...
+  <repositories>
+    <repository>
+      <id>my-internal-site</id>
+      <url>http://myserver/repo</url>
+    </repository>
+  </repositories>
+  ...
+</project>
+
+If your internal repository requires authentication, the id element can be used in your settings file to specify login information.
+
+Maven deploy to Nexus
+=======================
+It needs to define the repository information where the packaged artifacts will be deployed, via the distributionManagement element.
+<distributionManagement>
+   <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+   </snapshotRepository>
+</distributionManagement>
+
+By default, Maven handles the deployment mechanism via the maven-deploy-plugin – this mapped to the deployment phase of the default Maven lifecycle
+
+<plugin>
+   <artifactId>maven-deploy-plugin</artifactId>
+   <version>2.8.1</version>
+   <executions>
+      <execution>
+         <id>default-deploy</id>
+         <phase>deploy</phase>
+         <goals>
+            <goal>deploy</goal>
+         </goals>
+      </execution>
+   </executions>
+</plugin>
+
+Deployment to Nexus is a secured operation – and a deployment user exists for this purpose out of the box on any Nexus instance.
+The credentials of the server have to be defined in the global Maven setting.xml:
+<servers>
+   <server>
+      <id>nexus-snapshots</id>
+      <username>deployment</username>
+      <password>the_pass_for_the_deployment_user</password>
+   </server>
+</servers>
+
+
+
+
+
+
+
