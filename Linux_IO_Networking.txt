@@ -1,0 +1,175 @@
+htts://www.cs.unh.edu/cnrg/people/gherrin/linux-net.html
+
+This network represents the computer system at a fictional unnamed University (U!)
+- It has a router connected to the Internet at large (chrysler).
+- That machine is connected (through the jeep interface) to the campus-wide network, u.edu, consisting of computers named for Chrysler owned car companies (dodge, eagle, etc.)
+- here is also a LAN subnet for the computer science department, cs.u.edu, whose hosts are named after Dodge vehicle models (stealth, neon, etc.)
+- They are connected to the campus network by the dodge/viper computer
+- Both the u.edu and cs.u.edu networks use Ethernet hardware and protocols.
+
+Chapter 2: Message Traffic Overview
+-------------------------------------
+The Internet Protocol (IP) is the heart of the Linux messaging system. IP is almost always the nexus through which packets flow. The IP implementation of the network layer performs routing and forwarding as well as encapsulating data.
+
+Sequence
+==========
+1: Application generates the traffic
+2: It sends packets through sockets to a transport layer (TCP or UDP)
+3: Then to the network layer(IP)
+4: In the IP layer, the kernel looks up the route to the host in either the routing cache or its Forwarding Information Base (FIB)
+5: If the packet is for another computer, the kernel addresses it and then sends it, to an Ethernet device, which ultimately sends the packet out over the physical medium.
+
+
+6: When a packet arrives over the medium, the input interface receives it and checks to see if the packet is indeed for the host computer.
+7: It sends the packet up to the IP layer, which looks up the route to the packet's destination
+8: If the packet is for an application, it sends it up through the transport layer and sockets for the application to read when it is ready.
+
+The Protocol Stack
+===================
+1: Network Layer
+
+Network devices form the bottom layer of the protocol stack
+They use a link layer protocol (usually Ethernet) to communicate with other devices to send and receive traffic
+	- Input interfaces copy packets from a medium, perform some error checks, and then forward them to the network layer.
+	- Output interfaces receive packets from the network layer, perform some error checks, and then send them out over the medium.
+IP is the standard network layer protocol. 	
+It defragments packets if necessary and delivers them to the transport protocols.
+It maintains a database of routes for outgoing packets; it addresses and fragments them if necessary before sending them down to the link layer.
+
+2: Transport Layer
+
+TCP and UDP are the most common transport layer protocols.
+UDP simply provides a framework for addressing packets to ports within a computer, while TCP allows more complex connection based operation
+
+
+Packet Structure
+=================
+The key to maintaining the strict layering of protocols without wasting time copying parameters and payloads back and forth is the common packet data structure. 
+Transport protocols create these packet structures from output buffers, while device drivers create them for incoming data
+All of the protocols - transport (TCP/UDP), internet (IP), and link level (Ethernet) - use the same socket buffer
+
+Internet Routing
+=================
+The IP layer handles routing between computers. 
+It keeps two data structures; a Forwarding Information Base (FIB) that keeps track of all of the details for every known route, and a faster routing cache for destinations that are currently in use. 
+(There is also a third structure - the neighbor table - that keeps track of computers that are physically connected to a host.)
+
+
+The FIB is the primary routing reference; it contains up to 32 zones (one for each bit in an IP address) and entries for every known destination
+Each zone contains entries for networks or hosts that can be uniquely identified by a certain number of bits - a network with a netmask of 255.0.0.0 has 8 significant bits and would be in zone 8, while a network with a netmask of 255.255.255.0 has 24 significant bits and would be in zone 24
+When IP needs a route, it begins with the most specific zones and searches the entire table until it finds a match (there should always be at least one default entry). The file /proc/net/route has the contents of the FIB.
+
+The routing cache is a hash table that IP uses to actually route packets. 
+It contains up to 256 chains of current routing entries, with each entry's position determined by a hash function
+When a host needs to send a packet, IP looks for an entry in the routing cache, If there is none, it finds the appropriate route in the FIB and inserts a new entry into the cache. 
+
+his entry is what the various protocols use to route, not the FIB entry. The entries remain in the cache as long as they are being used; if there is no traffic for a destination, the entry times out and IP deletes it. 
+
+The file /proc/net/rt_cache has the contents of the routing cache.
+
+
+Chapter 3: Network Initialization
+-----------------------------------
+- Linux initializes routing tables on startup only if a computer is configured for networking. 
+- When the kernel finishes loading itself, it runs a set of common but system specific utility programs and reads configuration files, several of which establish the computer's networking capabilities
+- These determine its own address, initialize its interfaces (such as Ethernet cards), and add critical and known static routes (such as one to a router that connects it with the rest of the Internet).
+- If the computer is itself a router, it may also execute a program that allows it to update its routing tables dynamically
+
+- The entire configuration process can be static or dynamic.
+-  If addresses and names never change, the system administrator must define options and variables in files when setting up the system.
+-  In a more mutable environment, a host will use a protocol like the Dynamic Hardware Configuration Protocol (DHCP) to ask for an address, router, and DNS server information with which to configure itself when it boots.
+
+Startup
+--------
+When Linux boots as an operating system, it loads its image from the disk into memory, unpacks it, and establishes itself by installing the file systems and memory management and other key systems. 
+
+As the kernel's last (initialization) task, it executes the init program. This program reads a configuration file (/etc/inittab) which directs it to execute a startup script (found in /etc/rc.d on Red Hat distributions). 
+
+This in turn executes more scripts, eventually including the network script (/etc/rc.d/init.d/network)
+
+The Network Initialization Script
+---------------------------------
+- The network initialization script sets environment variables to identify the host computer and establish whether or not the computer will use a network. 
+- Depending on the values given, the network script turns on (or off) IP forwarding and IP fragmentation
+- It also establishes the default router for all network traffic and the device to use to send such traffic
+- Finally, it brings up any network devices using the ifconfig and route programs
+- In a dynamic environment, it would query the DHCP server for its network information instead of reading its own files
+
+Red Hat distributions, the /etc/rc.d/init.d/network script runs several other scripts and sets up variables like interfaces_boot to keep track of which /etc/sysconfig/network-scripts/ifup scripts to run 
+
+Tracing the process manually is very complicated, but simple modifications of only two configuration files (putting the proper names and IP addresses in the /etc/sysconfig/network and /etc/sysconfig/network-scripts/ifcfg-eth0 files) sets up the entire system properly (and a GUI makes the process even simpler)
+
+When the network script finishes, the FIB contains the specified routes to given hosts or networks and the routing cache and neighbor tables are empty.
+When traffic begins to flow, the kernel will update the neighbor table and routing cache as part of the normal network operations.
+
+
+ifconfig
+--------
+The ifconfig program configures interface devices for use. It provides each device with its (IP) address, netmask, and broadcast address. 
+The device in turn will run its own initialization functions (to set any static variables) and register its interrupts and service routines with the kernel
+
+route
+-------
+The route program simply adds predefined routes for interface devices to the Forwarding Information Base (FIB).
+
+Dynamic Routing Programs
+-------------------------
+If the computer is a router, the network script will run a routing program like routed or gated.
+
+Chapter 4: Connection
+-------------------------
+There are two main socket structures in Linux: general BSD sockets and IP specific INET sockets.
+
+
+Chapter 5: Sending Messages
+----------------------------
+- An outgoing message begins with an application system call to write data to a socket
+- The socket examines its own connection type and calls the appropriate send routine (typically INET)
+- The send function verifies the status of the socket, examines its protocol type, and sends the data on to the transport layer routine (such as TCP or UDP
+- This protocol creates a new buffer for the outgoing packet (a socket buffer, or struct sk_buff skb), copies the data from the application buffer, and fills in its header information (such as port number, options, and checksum) before passing the new buffer to the network layer (usually IP)
+- The IP send functions fill in more of the buffer with its own protocol headers (such as the IP address, options, and checksum). It may also fragment the packet if required. 
+- Next the IP layer passes the packet to the link layer function, which moves the packet onto the sending device's xmit queue and makes sure the device knows that it has traffic to send. 
+-  Finally, the device (such as a network card) tells the bus to send the packet.
+
+
+Chapter 6: Receiving Message
+-----------------------------
+- An incoming message begins with an interrupt when the system notifies the device that a message is ready
+- The device allocates storage space and tells the bus to put the message into that space
+- It then passes the packet to the link layer, which puts it on the backlog queue, and marks the network flag for the next ``bottom-half'' run.
+- When the process scheduler sees that there are networking tasks to do it runs the network bottom-half
+- This function pops packets off of the backlog queue, matches them to a known protocol (typically IP), and passes them to that protocol's receive function. 
+-  The IP layer examines the packet for errors and routes it; the packet will go into an outgoing queue (if it is for another host) or up to the transport layer (such as TCP or UDP).
+- This layer again checks for errors, looks up the socket associated with the port specified in the packet, and puts the packet at the end of that socket's receive queue
+
+Chapter 7: IP Forwarding
+--------------------------
+- A forwarded packet arrives with an interrupt when the system notifies the device that a message is ready
+- The device allocates storage space and tells the bus to put the message into that space.
+- It then passes the packet to the link layer, which puts it on the backlog queue, marks the network flag for the next ``bottom-half'' run, and returns control to the current process.
+- When the process scheduler next runs, it sees that there are networking tasks to do and runs the network ``bottom-half''
+- This function pops packets off of the backlog queue, matches them to IP, and passes them to the receive function
+- The IP layer examines the packet for errors and routes it; the packet will go up to the transport layer (such as TCP or UDP if it is for this host) or sideways to the IP forwarding function. 
+- Within the forwarding function, IP checks the packet and sends an ICMP message back to the sender if anything is wrong. 
+- Finally the IP layer passes the packet to the link layer function, which moves the packet onto the sending device's xmit queue and makes sure the device knows that it has traffic to send
+- Finally, the device (such as a network card) tells the bus to send the packet.
+
+Chapter 8: Basic Protocol Routing
+-----------------------------------
+Linux maintains three sets of routing data
+- one for computers that are directly connected to the host (via a LAN, for example) 
+- two for computers that are only indirectly connected (via IP networking). 
+
+
+The neighbor table contains address information for computers that are physically connected to the host (hence the name ``neighbor'').
+It includes information on which device connects to which neighbor and what protocols to use in exchanging data.
+Linux uses the Address Resolution Protocol (ARP) to maintain and update this table; it is dynamic in that entries are added when needed but eventually disappear if not used again within a certain time
+
+Linux uses two complex sets of routing tables to maintain IP addresses: 
+- an all-purpose Forwarding Information Base (FIB) with directions to every possible address,
+- a smaller (and faster) routing cache with data on frequently used routes
+
+If there is such an entry, IP uses it. If not, IP requests the routing information from the more complete (but slower) FIB, builds a new cache entry with that data, and then uses the new entry. 
+
+The Forwarding Information Base (FIB) is the most important routing structure in the kernel; it is a complex structure that contains the routing information needed to reach any valid IP address by its network mask.
+
