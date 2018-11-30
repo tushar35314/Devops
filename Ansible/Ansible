@@ -1,0 +1,75 @@
+https://docs.ansible.com/ansible/
+=================================
+
+Installation on Ubunutu
+-------------------------
+$ sudo apt-get update
+$ sudo apt-get install software-properties-common
+$ sudo apt-add-repository ppa:ansible/ansible
+$ sudo apt-get update
+$ sudo apt-get install ansible
+
+root@chefautomate:/home/trisha/devops/ansible# which ansible
+/usr/bin/ansible
+root@chefautomate:/home/trisha/devops/ansible# ansible --version
+ansible 2.7.2
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/root/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/dist-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 2.7.12 (default, Nov 19 2016, 06:48:10) [GCC 5.4.0 20160609]
+
+
+Configuring Ansible
+---------------------
+Certain settings in Ansible are adjustable via a configuration file (ansible.cfg).
+
+Ansible Configuration: https://docs.ansible.com/ansible/2.5/reference_appendices/config.html#ansible-configuration-settings
+
+
+Ansible uses a simple syntax (YAML) and simple command-line tools (using common POSIX conventions) for all its powerful abilities.
+
+Ansible aims to be:
+1. Clear - Ansible uses a simple syntax (YAML) and is easy for anyone (developers, sysadmins, managers) to understand. APIs are simple and sensible.
+2. Fast - Fast to learn, fast to set up—especially considering you don’t need to install extra agents or daemons on all your servers!
+3. Complete - Ansible does three things in one, and does them very well.Ansible’s ‘batteries included’ approach means you have everything you need in one complete package.
+4. Efficient - No extra software on your servers means more resources for your applications. Also, since Ansible modules work via JSON, Ansible is extensible with modules written in a programming language you already know.
+5. Secure - Ansible uses SSH, and requires no extra open ports or potentially-vulnerable daemons on your servers
+
+
+Chapter 1 - Getting Started with Ansible
+=========================================
+
+Using pip allows you to upgrade Ansible with pip install --upgrade ansible .
+
+Creating a basic inventory file
+--------------------------------
+
+Ansible uses an inventory file (basically, a list of servers) to communicate with your servers.
+Like a hosts file (at /etc/hosts ) that matches IP addresses to domain names,an Ansible inventory file matches servers (IP addresses or domain names) to groups
+Create a file at /etc/ansible/hosts (the default location for Ansible’s inventory file), and add one server to it.
+
+1 [example]				Groups of hosts are delimited by [header] elements
+2 www.example.com			You can enter hostnames or ip addresses. A hostname/ip can be a member of multiple groups. Ungrouped hosts need to be specified before any group headers.
+
+If you’re not using port 22 for SSH on this server, you will need to add it to the address, like www.example.com:2222, since Ansible defaults to port 22 and won’t get this value from your ssh config file.
+
+
+Running your first Ad-Hoc Ansible command
+-------------------------------------------
+$ ansible example -m ping -u [username]
+$ ansible example -a "free -m" -u [username]
+
+
+Chapter 2 - Local Infrastructure Development: Ansible and Vagrant
+==================================================================
+
+************************************************************
+*https://docs.ansible.com/ansible/2.5/user_guide/index.html*
+************************************************************
+
+
+Ansible by default manages machines over the SSH protocol.
+- Once Ansible is installed, it will not add a database, and there will be no daemons to start or keep running. You only need to install it on one machine (which could easily be a laptop) and it can manage an entire fleet of remote machines from that central point
+- 
+
