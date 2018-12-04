@@ -1,6 +1,8 @@
 # Devops
 
 Chef Community: https://github.com/chef-cookbooks 
+Chef two pass error: https://blog.alanthatcher.io/lazy-is-good/ https://coderanger.net/two-pass/
+
 
 Maven: https://maven.apache.org/
 
