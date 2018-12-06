@@ -1,0 +1,39 @@
+Docker Commands
+==================
+https://docs.docker.com/engine/reference/commandline/docker/
+https://docs.docker.com/engine/reference/builder/#known-issues-run
+
+docker attach
+	Attach local standard input, output and error streams to a running container
+	Synatx: docker attach [OPTIONS] CONTAINER
+	Use docker attach to attach your terminal’s standard input, output, and error (or any combination of the three) to a running container using the container’s ID or name.
+	This allows you to view its ongoing output or to control it interactively, as though the commands were running directly in your terminal.
+	To stop a container, use CTRL-c. This key sequence sends SIGKILL to the container.
+	You can detach from a container and leave it running using the CTRL-p CTRL-q key sequence.
+	$ docker run -d --name topdemo ubuntu /usr/bin/top -b
+	$ docker attach topdemo
+	
+docket build
+	Builds an image from the docker file
+	Syntax: docker build [OPTIONS] PATH | URL | -
+	The docker build command builds Docker images from a Dockerfile and a “context”. A build’s context is the set of files located in the specified PATH or URL
+	Build with path
+	$ docker build .
+	Tag an image (-t)
+	Ex: $ docker build -t vieux/apache:2.0 .
+	Specify a Dockerfile (-f)
+	Ex. $ docker build -f Dockerfile.debug .	This will use a file called Dockerfile.debug for the build instructions instead of Dockerfile.
+	
+docker commit
+	Create a new image from a container’s changes
+	Syntax: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+	It can be useful to commit a container’s file changes or settings into a new image.
+	Ex: 
+	$ docker ps
+	$ docker commit c3f279d17e0a  svendowideit/testimage:version3
+	$ docker images
+	
+docker cp
+	Copy files/folders between a container and the local filesystem
+	docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-
+	
