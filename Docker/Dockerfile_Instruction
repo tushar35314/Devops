@@ -1,0 +1,100 @@
+https://kapeli.com/cheat_sheets/Dockerfile.docset/Contents/Resources/Documents/index
+
+Docker File Instruction
+========================
+
+1: FROM
+- FROM must be the first non-comment instruction in the Dockerfile
+- FROM can appear multiple times within a single Dockerfile in order to create multiple images
+- To specify the valid docker image to be down loaded from docker hub registry
+
+Ex: 
+FROM <image>
+FROM <image>:<tag>
+
+FROM docker.io/centos:latest
+FROM docker.io/centos:6
+
+2: MAINTAINER
+
+-  The MAINTAINER instruction allows you to set the Author field of the generated images
+MAINTAINER <name>
+
+3: RUN
+- The exec form makes it possible to avoid shell string munging, and to RUN commands using a base image that does not contain the specified shell executable.
+- RUN is used to execute any command on the top of the current image 
+Ex: RUN <command>
+RUN yum update
+RUN systemctl start httpd
+
+4: CMD
+- The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well. 
+- There can only be one CMD instruction in a Dockerfile. If you list more than one CMD then only the last CMD will take effect
+- If CMD is used to provide default arguments for the ENTRYPOINT instruction, both the CMD and ENTRYPOINT instructions should be specified with the JSON array format.
+- Used to set a command to be executed when running a container
+CMD ping google.com
+CMD python myapplication.py
+
+
+5: LABEL
+- The LABEL instruction adds metadata to an image
+- To include spaces within a LABEL value, use quotes and backslashes as you would in command-line parsing
+- If Docker encounters a label/key that already exists, the new value overrides any previous labels with identical keys.
+- Used to specify metedate instruction to an image
+
+LABEL <key>=<value>
+LABEL "Application_Environment"="Development"
+LABEL "Application_Support"="LearnITGuide.net Group"
+
+6: EXPOSE
+- Informs Docker that the container listens on the specified network port(s) at runtime
+- EXPOSE does not make the ports of the container accessible to the host.
+- EXPOSE instruction is used to inform about the network port the container listens to during runtime
+Ex: EXPOSE <port>
+EXPOSE 80 443
+EXPOSE 80/tcp 8080/udp
+
+7: ENV
+- The ENV instruction sets the environment variable <key> to the value <value>
+- The environment variables set using ENV will persist when a container is run from the resulting image.
+Ex: ENV <key> <value>
+
+
+8: ADD
+- Copies new files, directories, or remote file URLs from <src> and adds them to the filesystem of the image at the path <dest>
+Ex: ADD <src> [<src> ...] <dest>
+
+9: COPY
+- Copies new files or directories from <src> and adds them to the filesystem of the image at the path <dest>
+- <dest> is an absolute path, or a path relative to WORKDIR
+Ex: COPY <src> [<src> ...] <dest>
+
+Difference between ADD and COPY
+------------------------------------
+
+- ADD allows <src> to be a URL
+- COPY takes in a src and destination. It only lets you copy in a local file or directory from your host (the machine building the Docker image) into the Docker image itself.
+
+- ADD lets you do that too, but it also supports 2 other sources. First, you can use a URL instead of a local file / directory. Secondly, you can extract a tar file from the source directly into the destination.
+
+10: ENTRYPOINT
+- Allows you to configure a container that will run as an executable
+- Command line arguments to "docker run <image>" will be appended after all elements in an exec form ENTRYPOINT and will override all elements specified using CMD.
+Ex: ENTRYPOINT ["<executable>", "<param1>", "<param2>"]
+
+11: WORKDIR
+- Sets the working directory for any RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow it.
+
+
+Example of Docker File
+-----------------------
+FROM docker.io/centos
+MAINTAINER Devops Engineer
+RUN yum update && yum -y install httpd
+RUN mkdir -p /data/myscript
+WORKDIR /data/myscript
+CMD python app.py
+
+
+
+
