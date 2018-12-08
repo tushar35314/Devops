@@ -1,0 +1,59 @@
+Maven Repositories
+===================
+
+The official Maven 2 repository is at http://repo.maven.apache.org/maven2
+
+Artifact Repositories
+----------------------
+A repository in Maven is used to hold build artifacts and dependencies of varying types.
+There are strictly only two types of repositories:
+
+Local: 
+	The local repository refers to a copy on your own installation that is a cache of the remote downloads, and also contains the temporary build artifacts that you have not yet released.
+	
+Remote:
+	Remote repositories refer to any other type of repository, accessed by a variety of protocols such as file:// and http://
+	
+Downloading from a Remote Repository
+------------------------------------
+Downloading in Maven is triggered by a project declaring a dependency that is not present in the local repository. By default, Maven will download from the central repository.
+
+To override this, you will need to specify 'mirror. 
+
+Using Mirror for Repositories
+---------------------------------
+With Repositories you specify from which locations you want to download certain artifacts, such as dependencies and maven-plugins.
+
+To configure a mirror of a given repository, you provide it in your settings file (${user.home}/.m2/settings.xml), giving the new repository its own id and url, and specify the mirrorOf setting that is the ID of the repository you are using a mirror of.
+
+<settings>
+  ...
+  <mirrors>
+    <mirror>
+      <id>UK</id>
+      <name>UK Central</name>
+      <url>http://uk.maven.org/maven2</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+  ...
+</settings>
+
+You can set this in your settings.xml file to globally use a certain mirror, however note that it is common for a project to customize the repository in their pom.xml and that your setting will take precedence. 
+
+
+Internal Repositories
+-----------------------
+When using Maven, particularly in a corporate environment, connecting to the internet to download dependencies is not acceptable for security, speed or bandwidth reasons. For that reason, it is desirable to set up an internal repository to house a copy of artifacts, and to publish private artifacts to.
+
+Using the internal repository is quite simple. Simply make a change to add a repositories element:
+<project>
+  ...
+  <repositories>
+    <repository>
+      <id>my-internal-site</id>
+      <url>http://myserver/repo</url>
+    </repository>
+  </repositories>
+  ...
+</project>
