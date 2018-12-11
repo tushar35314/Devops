@@ -1,0 +1,182 @@
+Domain Name System (DNS)
+=========================
+https://docs.microsoft.com/en-us/windows-server/networking/dns/dns-top
+https://www.geeksforgeeks.org/dns-domain-name-server/
+
+DNS is a host name to IP address translation service. It is an application layer protocol for message exchange between clients and servers.
+DNS is used to convert the domain name of the websites to their numerical IP address.
+
+There are various kinds of domains
+
+-  Generic Domain 
+	com(commercial) .edu(educational) .mil(military) .org(non profit organization) .net(similar to commercial) all these are generic domain
+- Country domain
+	.in (india) .us .uk
+
+In IP address comprises of two component: 1: Network Component	2: Host Component. Each of the 4 bytes is represented by a number from 0 to 255, separated with dots
+
+Uniform Resource Locator (URL)
+-------------------------------
+refers to a web address which uniquely identifies a document over the internet. There are two type of URLs 
+- Absolute URL
+- Relative URL
+
+Absolute URL is a complete address of a resource on the web. For example http:// www.tutorialspoint.com / internet_technology /index.htm
+- http is the protocol
+- tutorialspoint.com is the server name
+- index.htm is the file name.
+
+Relative URL is a partial address of a webpage, the protocol and server part are omitted from relative URL.
+
+DNS Architecture
+==================
+The Domain name system comprises of Domain Names, Domain Name Space, Name Server 
+
+Domain Name
+	Domain Name is a symbolic string associated with an IP address. There are several Domain name such as com, edu, gov, net 
+	
+Domain Name Space
+	The domain name space refers a hierarchy in the internet naming structure. This hierarchy has multiple levels (from 0 to 127), with a root at the top
+	https://www.tutorialspoint.com/internet_technologies/internet_domain_name_system.htm
+
+Name Server
+	Name server contains the DNS database. This database comprises of various names and their corresponding IP addresses.Since it is not possible for a single server to maintain entire DNS database, therefore, the information is distributed among many DNS servers.
+	
+Zones
+	Zone is collection of nodes (sub domains) under the main domain. The server maintains a database called zone file for every zone.
+	
+Types of Name Server
+====================
+- Root
+- Primary
+- Secondary
+
+Root Server
+	Root Server is the top level server which consists of the entire DNS tree
+	
+Primary Server
+	Primary Server stores a file about its zone.It has authority to create, maintain, and update the zone file.
+	
+Secondary 
+	Secondary Server transfers complete information about a zone from another server which may be primary or secondary server. 
+	
+DNS Working
+===========
+DNS translates the domain name into IP address automatically. Following are the steps taken to do so
+
+- When we type www.tutorialspoint.com into the browser, it asks the local DNS Server for its IP address. (local DNS is at ISP end)
+- When the local DNS does not find the IP address of requested domain name, if forwards he request to the root DNS server. 
+- The root DNS server replies with delegation that I do not know the IP address of www.tutorialspoint.com but know the IP address of DNS Server.
+- The local DNS server then asks the com DNS Server the same question.
+- The com DNS Server replies the same that it does not know the IP address of www.tutorialspont.com but knows the address of tutorialspoint.com.
+- Then the local DNS asks the tutorialspoint.com DNS server the same question.
+- Then tutorialspoint.com DNS server replies with IP address of www.tutorialspoint.com.
+- Now, the local DNS sends the IP address of www.tutorialspoint.com to the computer that sends the request.
+
+
+Summary
+--------
+- The client machine sends a request to the local name server
+- Which, if root does not find the address in its database, sends a request to the root name server
+- Which in turn, will route the query to an intermediate or authoritative name server. 
+
+
+DHCP(Dynamic Host Configuration Protocol)
+==========================================
+https://www.9tut.com/dhcp-tutorial
+
+In IP environment, before a computer can communicate to another one, they need to have their own IP addresses. There are two ways of configuring the IP address on device. 
+
+- Statically assign an IP address. This means we manually type an IP address for this computer
+- Use a protocol so that the computer can obtain its IP address automatically (dynamically). DHCP
+
+A big advantage of using DHCP is the ability to join a network without knowing detail about it.
+
+How does DHCP works
+---------------------
+- When a client boots up for the first time (or try to join a new network), it needs to obtain an IP address to communicate
+- So it first transmits a DHCPDISCOVER message on its local subnet
+- The client does not have a configured IP address, so the source IP address of 0.0.0.0 is used.
+- The purpose of DHCPDISCOVER message is to try to find out a DHCP Server (a server that can assign IP addresses).
+
+- After receiving the discover message, the DHCP Server will dynamically pick up an unassigned IP address from its IP pool and broadcast a DHCPOFFER message to the client(*).
+- DHCPOFFER message could contain other information such as subnet mask, default gateway, IP address lease time, and domain name server (DNS).
+
+- If the client accepts the offer, it then broadcasts a DHCPREQUEST message saying it will take this IP address. 
+- It is called request message because the client might deny the offer by requesting another IP address. 
+- Notice that DHCPREQUEST message is still a broadcast message because the DHCP client has still not received an acknowledged IP. 
+- DHCP Client can receive DHCPOFFER messages from other DHCP Servers so sending broadcast DHCPREQUEST message is also a way to inform other offers have been rejected. 
+
+- When the DHCP Server receives the DHCPREQUEST message from the client, the DHCP Server accepts the request by sending the client a unicast DHCPACKNOWLEDGEMENT message (DHCPACK).
+
+******************************************************************************************************************************
+In conclusion there are four messages sent between the DHCP Client and DHCP Server: DHCPDISCOVER, DHCPOFFER, DHCPREQUEST and DHCPACKNOWLEDGEMENT. This process are often abbreviated as DORA (for Discover, Offer, Request, Acknowledgment).
+******************************************************************************************************************************
+
+After receiving DHCPACKNOWLEDGEMENT, the IP address is leased to the DHCP Client. A client will usually keep the same address by periodically contacting the DHCP server to renew the lease before the lease expires.
+
+If the DHCP Server is not on the same subnet with the DHCP Client, we need to configure the router on the DHCP client side to act as a DHCP Relay Agent so that it can forward DHCP messages between the DHCP Client & DHCP Server.
+
+To make a router a DHCP Relay Agent, simply put the “ip helper-address <IP-address-of-DHCP-Server>” command under the interface that receives the DHCP messages from the DHCP Client.
+
+DHCP and Linux Configuration (https://linuxconfig.org/what-is-dhcp-and-how-to-configure-dhcp-server-in-linux)
+---------------------------------------------------------------------------------------------------------------
+DHCP server keeps a record of all leased IP addresses and stores them in a file called dhcpd.leases within  /var/lib/dhcp directory
+
+1: To install DHCP on linux
+	- apt-get install isc-dhcp-server
+	- yum install dhcp
+	
+2: Basic DHCP configuration
+To start DHCP server, at least one subnet must be defined within the DHCP configuration file /etc/dhcp/dhcpd.conf. 
+
+NOTE: if your server has access to more than one subnet, DHCP requires all subnets to be defined even though there isn't immediate intention to enable DHCP service on that subnet
+
+subnet 10.1.1.0 netmask 255.255.255.0 {
+  range 10.1.1.3 10.1.1.254;
+}
+
+subnet 192.168.0.0 netmask 255.255.0.0 {
+} 
+This configuration file instructs DHCP server to listen for DHCP client requests on subnet 10.1.1.0 with netmask 255.255.255.0.
+Furthermore, it will assign IP addresses in range 10.1.1.3 - 10.1.1.254
+
+Alter the above code  with your subnet and insert it into /etc/dhcp/dhcpd.conf
+Then restart the dhcp server 
+
+$ service isc-dhcp-server restart
+
+DHCP default and max lease time
+--------------------------------
+default-lease-time 600;
+max-lease-time 7200;
+
+subnet 10.1.1.0 netmask 255.255.255.0 {
+  range 10.1.1.3 10.1.1.254;
+}
+
+subnet 192.168.0.0 netmask 255.255.0.0 {
+}
+
+Define DNS Server
+--------------------
+default-lease-time 600;
+max-lease-time 7200;
+
+subnet 10.1.1.0 netmask 255.255.255.0 {
+  range 10.1.1.3 10.1.1.254;
+  option domain-name-servers 10.1.1.1, 8.8.8.8;
+}
+
+subnet 192.168.0.0 netmask 255.255.0.0 {
+}
+
+subnet 10.1.1.0 netmask 255.255.255.0 {
+  range 10.1.1.3 10.1.1.254;
+  option routers 10.1.1.1;
+}
+
+
+
+
+

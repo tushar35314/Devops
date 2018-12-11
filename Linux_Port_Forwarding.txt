@@ -1,0 +1,110 @@
+In computer networking, port forwarding or port mapping is an application of network address translation (NAT) that redirects a communication request from one address and port number combination to another while the packets are traversing a network gateway, such as a router or firewall. 
+
+This technique is most commonly used to make services on a host residing on a protected or masqueraded (internal) network available to hosts on the opposite side of the gateway (external network)
+
+Port Forwarding allows remote computers (for example, computers on the Internet) to connect to a specific computer or service within a private local-area network (LAN).
+
+When configuring port forwarding, the network administrator sets aside one port number on the gateway for the exclusive use of communicating with a service in the private network, located on a specific host. External hosts must know this port number and the address of the gateway to communicate with the network-internal service
+
+Linux (https://www.digitalocean.com/community/tutorials/how-to-forward-ports-through-a-linux-gateway-with-iptables)
+=======================================================================================================================
+NAT, or network address translation, is a general term for mangling packets in order to redirect them to an alternative address.
+Port forwarding is the process of forwarding requests for a specific port to another host, network, or port. 
+
+We will demonstrate how to use iptables to forward ports to hosts behind a firewall by using NAT techniques.
+
+Prerequisites and Goals
+-------------------------
+Will need two Ubuntu 14.04 hosts in the same datacenter with private networking enabled.
+On each of these machines, you will need to set up a non-root user account with sudo privileges
+
+The first host will function as our firewall and router for the private network. 
+The second host will be configured with a web server that is only accessible using its private interface. 
+
+We will be configuring the firewall machine to forward requests received on its public interface to the web server, which it will reach on its private interface.
+
+You can find the interfaces on your machines and the addresses associated
+	$ ip -4 addr show scope global
+	
+You can see the available network interface and the associated address. 
+To find the public interface
+	$ ip route show | grep default
+Find these values on each of your machines and use them to correctly follow along with this guide.
+
+Here are some of the assumptions to complete this demo
+-------------------------------------------------------
+
+Web Server
+-----------
+Public IP Address: 203.0.113.2
+Private IP Address: 192.0.2.2
+Public Interface: eth0
+Private Interface: eth1
+
+Firewall Network 
+--------------------
+Public IP Address: 203.0.113.15
+Private IP Address: 192.0.2.15
+Public Interface: eth0
+Private Interface: eth1
+
+
+Setting up the web server
+===========================
+
+Install Nginx
+---------------
+Install Nginx on our web server host and lock it down so that it only listen to its private interface.  This is ensure that our web server will only work if we configure the port forwarding. 
+
+$ sudo apt-get update
+$ sudo apt-get install nginx
+
+Restrict Nginx to the Private Network
+---------------------------------------
+After Nginx is installed, we will open up the default server block configuration file to ensure that it only listens to the private interface.
+$ sudo nano /etc/nginx/sites-enabled/default
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server ipv6only=on;
+
+    . . .
+}
+
+At the first listen directive, add your web server's private IP address and a colon just ahead of the 80 to tell Nginx to only listen on the private interface.
+We are only demonstrating IPv4 forwarding in this guide, so we can remove the second listen directive, which is configured for IPv6.
+
+server {
+    listen 192.0.2.2:80 default_server;
+	}
+Save and close the file when you are finished. Test the file for syntax errors by typing:
+$ sudo nginx -t
+
+If no errors are shown, restart Nginx to enable the new configuration:
+$ sudo service nginx restart
+
+Verify the Network Restriction
+-------------------------------
+From the firewall server. 
+$ curl --connect-timeout 5 192.0.2.2
+
+If we try to use the public interface, we will see that we cannot connect:
+$ curl --connect-timeout 5 203.0.113.2
+
+Configuring the Firewall to Forward Port 80
+--------------------------------------------
+Now, we can work on implementing port forwarding on our firewall machine
+
+$ echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
+
+To enable port forwarding permanently, edit the file /proc/sys/net/ipv4/ip_forward, uncomment the following lines of code 
+net.ipv4.ip_forward=1
+
+Save, close and apply the changes
+
+$ sudo sysctl -p
+$ sudo sysctl --system
+
+Setting up the Basic Firewall
+-----------------------------
+
