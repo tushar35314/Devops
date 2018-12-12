@@ -55,3 +55,14 @@ The order of execution depends on the order in which the goal(s) and the build p
 Ex. The clean and package arguments are build phases, while the dependency:copy-dependencies is a goal
 
 mvn clean dependency:copy-dependencies package
+
+
+Miminal POM
+------------
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1</version>
+</project>
