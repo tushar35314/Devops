@@ -1,1 +1,9 @@
 Linux Version Identification: cat /etc/os-release
+
+RHEL
+Install : yum install <package name>
+Uninstall: yum remove <package name>
+
+Ubuntu
+Intall: apt-get install <package name>
+Uninstall: sudo apt-get --purge <package name>
