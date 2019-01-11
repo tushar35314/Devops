@@ -20,3 +20,7 @@ Minikube: https://github.com/kubernetes/minikube
           https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/
 
 Linux IP Networking: https://www.cs.unh.edu/cnrg/people/gherrin/linux-net.html 
+
+
+Ruby on Rails: https://guides.rubyonrails.org/getting_started.html
+https://www.railstutorial.org/book/beginning
