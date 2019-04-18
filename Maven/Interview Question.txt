@@ -1,0 +1,31 @@
+Maven Interview Questions
+===========================
+1: What does it mean when you say Maven uses Convention over Configuration?
+
+2: What is the version of Maven you are using
+3.6.0
+
+3: What is POM
+POM stands for Project Object Model. It is fundamental Unit of Work in Maven. It is an XML file. It always resides in the base directory of the project as pom.xml. 
+
+4: Command to build your Maven site
+mvn site
+
+5: Command to install a JAR
+mvn install
+
+6: What are the types of plugins in Maven
+- Build 
+- Reporting
+
+7: What is archetype 
+Archetype is a Maven project templating toolkit. An archetype is defined as an original pattern or model from which all other things of the same kind are made.
+Archetype will help authors create Maven project templates for users, and provides users with the means to generate parameterized versions of those project templates.
+
+https://maven.apache.org/archetypes/
+ex: 
+maven-archetype-archetype
+maven-archetype-j2ee-simple
+maven-archetype-plugin
+maven-archetype-plugin-site
+maven-archetype-webapp
