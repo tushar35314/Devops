@@ -1,0 +1,25 @@
+https://www.linuxjournal.com/article/2408
+hostnamectl set-hostname servername.example.com
+
+
+Proxy servers are software applications that run on your firewall machine in order to provide indirect Internet access to your network.
+The firewall can be either a “single-homed” host or a “dual-homed” host. 
+
+Single-homed
+---------------
+A single-homed host is a machine with one network card. This configuration relies on the Internet router to block all packets to any machine except the firewall. 
+
+Dual-homed
+------------
+A dual-homed host is a machine with two network cards that has routing capabilities disabled. Computers behind the firewall can talk to the dual-homed host, and computers on the Internet can communicate with the dual-homed host. However, since routing between the network cards is disabled, the computers behind the firewall cannot talk directly to the computers on the Internet.
+
+The proxy server is used to allow Internet access from inside the protected network through either the single or dual-homed host firewall.
+The client applications speak directly to the proxy server and the proxy server in turn speaks directly to the Internet hosts on behalf of the client, thus acting as a proxy.
+
+This interaction allows Internet access to all clients on the internal network, but leaves only one machine, the firewall, directly vulnerable to attacks from the Internet.
+
+- The proxy server takes a packet from inside your network that is bound for the Internet and changes the “from” address to its own address.
+- It then forwards the packet to the destination host.
+- The beauty of the proxy server is that the destination host thinks it is talking only to the firewall
+- When the firewall receives the response from the destination host, the proxy server sends the packet back to the original requesting machine.
+- 

@@ -1,0 +1,69 @@
+https://www.techopedia.com/6/28587/internet/8-steps-to-understanding-ip-subnetting/7
+https://www.techopedia.com/definition/6467/classless-interdomain-routing-cidr
+https://www.techopedia.com/dictionary/tags/networks
+
+Network administrators use Classless Internet Domain Routing (CIDR), pronounced "cider", to represent IP addresses. 
+The idea behind CIDR is to adapt the concept of subnetting to the entire Internet. In short, classless addressing means that instead of breaking a particular network into subnets, we can aggregate networks into larger supernets. 
+
+CIDR is therefore often referred to as supernetting, where the principles of subnetting are applied to larger networks.  CIDR is written out in a network/mask format, where the mask is tacked onto the network address in the form of the number of bits used in the mask
+Ex: 205.112.45.60/25
+
+What is most important to understand about the CIDR method of subnetting is the use the network prefix, rather than the classful way of using the first three bits of the IP address to determine the dividing point between the network number and the host number.
+
+- The “205” in the first octet means this IP address would normally contain 24 bits to represent the network portion of the address. With eight bits to an octet, the arithmetic is 3 x 8 = 24, or looking at it the other way around, “/24” means no bits are being borrowed from the last octet.
+
+- But this is “/25,” which indicates it is “borrowing” one bit from the host portion of the address.
+
+- With only one bit, there can only be two unique subnets.
+
+- So this is the equivalent of a net mask of 255.255.255.128, where there is a maximum of 126 host addresses addressable on each of the two subnets
+
+
+IP Address
+-----------
+An IP address, short for Internet Protocol address, is an identifying number for a piece of network hardware. An IP address provides an identity to a networked device. 
+Computer uses the DNS Servers to look up a host to find the IP address. 
+
+When I enter a website like www.lifewire.com into my browser, my request to load that page is sent to DNS servers that look up that hostname (lifewire.com) to find its corresponding IP address (151.101.65.121). 
+
+Types
+
+- Private
+	These are used inside a network. These types of IP addresses are used to provide a way for your devices to communicate with your router and all the other devices in your private network. 
+	
+- Public
+	These are used outside your network and are assigned by your IPS. 
+	
+An IP address that is assigned by a DHCP is a dynamic IP. If a device does not have DHCP enabled or does not support it then the IP address must be assigned manually, in which case the IP address is called a static IP address.
+
+A private IP address is an IP address that's reserved for internal use behind a router or other Network Address Translation (NAT) device, apart from the public.
+
+Which IP address are Private IP Address
+========================================
+The Internet Assigned Numbers Authority (IANA) reserves the following IP address blocks for use as private IP addresses:
+
+10.0.0.0 to 10.255.255.255
+172.16.0.0 to 172.31.255.255
+192.168.0.0 to 192.168.255.255
+
+The hardware within a specific network that are using a private IP address can communicate with all the other hardware within the confines of that network, but will require a router to communicate with devices outside the network, after which the public IP address will be used for the communication.
+
+
+Reserved IP Address
+--------------------
+These are similar to private IP addresses in the sense that they can't be used for communicating on the greater internet, but they're even more restrictive than that.
+
+The most famous reserved IP is 127.0.0.1. This address is called the loopback address and is used to test the network adapter or integrated chip. 
+Private IP addresses can't communicate directly with a public IP address. This means if a device that has a private IP address is connected directly into the internet, and therefore becomes non-routable, the device will have no network connection until the address is translated into a working address through a NAT, or until the requests it's sending are sent through a device that does have a valid public IP address.
+
+However, because private IP addresses are hidden behind a router, the router must know which IP address it should forward information to if you're wanting something like an FTP server to be set up on a home network.
+
+For this to work properly for private IP addresses, you must set up port forwarding. Forwarding one or more ports to a specific private IP address involves logging into the router to access its settings, and then choosing which port(s) to forward, and to where it should go.
+
+Public IP Address
+===================
+
+A public IP address is an IP address that your home or business router receives from your ISP. Public IP addresses are required for any publicly accessible network hardware, like for your home router as well as for the servers that host websites.
+
+
+

@@ -1,0 +1,134 @@
+It helps in moving from host-centric infrastructure to container-centric infrastructure
+
+Kubernetes - Cluster Architecture
+------------------------------------
+
+Kubernetes follows the master-slave architecture. Wherein we have installed the master on one machine and the slave on a different machine. 
+
+
+Kubernetes master compoments
+-----------------------------
+
+1. etcd
+--------
+It stores the configuration information which can be used by each of the nodes in the cluster. 
+It is accessible only by Kubernetes API server as it may have some sensitive information
+
+2: API Server
+--------------
+API server implements an interface, which means different tools and libraries can readily communicate with it. 
+It exposes Kubernetes API.
+
+3: Controller Manager
+----------------------
+This component is responsible for most of the collectors that regulates the state of cluster and performs a task
+
+4: Scheduler
+-------------
+It is a service in master responsible for distributing the workload.
+The scheduler is responsible for workload utilization and allocating pod to new node.
+
+
+Kubernetes Node Compoments
+-----------------------------
+
+1: Docker
+---------
+The first requirement of each node is Docker which helps in running the encapsulated application containers in a relatively isolated but lightweight operating environment.
+
+
+2: Kuberlet Service
+----------------------
+This is a small service in each node responsible for relaying information to and from control plane service.
+The kubelet process then assumes responsibility for maintaining the state of work and the node server. It manages network rules, port forwarding, etc
+
+3: Kubernetes Proxy Service
+-----------------------------
+This is a proxy service which runs on each node and helps in making services available to the external host. 
+It helps in forwarding the request to correct containers and is capable of performing primitive load balancing.
+It manages pods on node, volumes, secrets, creating new containers’ health checkup, etc.
+
+
+It manages pods on node, volumes, secrets, creating new containers’ health checkup, etc.
+
+When we are configuring a pod, the image property in the configuration file has the same syntax as the Docker command does. The configuration file has a field to define the image name, which we are planning to pull from the registry.
+
+The structure of the configuration file 
+---------------------------------------
+apiVersion: v1
+kind: pod
+metadata:
+   name: Tesing_for_Image_pull -----------> 1
+   spec:
+      containers:
+         - name: neo4j-server ------------------------> 2
+         image: <Name of the Docker image>----------> 3
+         imagePullPolicy: Always ------------->4
+         command: ["echo", "SUCCESS"] ------------------->
+		 
+		 
+1 name: Tesing_for_Image_pull : This name is given to identify and check what is the name of the container that would get created after pulling the images from Docker registry.
+2 name: neo4j-server : The name of the container that we are trying to created
+3 image: <Name of the Docker image>: The name of the Docker image that we are trying to pull
+
+
+In order to pull the image and create a container, we use the following
+$ kubectl create –f Tesing_for_Image_pull
+
+To fetch the log
+$ kubectl log Tesing_for_Image_pull
+
+
+Kubernetes Job
+-----------------
+The main function of a job is to create one or more pod and tracks about the success of pods.
+
+apiVersion: v1
+kind: Job ------------------------> 1
+metadata:
+   name: py
+   spec:
+   template:
+      metadata
+      name: py -------> 2
+      spec:
+         containers:
+            - name: py ------------------------> 3
+            image: python----------> 4
+            command: ["python", "SUCCESS"]
+            restartPocliy: Never --------> 5
+			
+1 kind: Job :We have defined the kind as Job which will tell kubectl that the yaml file being used is to create a job type pod.
+2 Name:py :This is the name of the template that we are using and the spec defines the template.
+
+Now save the created job by using:  $ kubectl create –f py.yaml
+To check the status of the job : $ kubectl describe jobs/py
+
+Schedule Job
+--------------
+Scheduled job in Kubernetes uses Cronetes, which takes Kubernetes job and launches them in Kubernetes cluster.
+
+	* Scheduling a job will run a pod at a specified point of time
+	* A parodic job is created for it which invokes itself automatically.
+
+apiVersion: v1
+kind: Job
+metadata:
+   name: py
+spec:
+   schedule: h/30 * * * * ? -------------------> 1
+   template:
+      metadata
+         name: py
+      spec:
+         containers:
+         - name: py
+         image: python
+         args:
+/bin/sh -------> 2
+-c
+ps –eaf ------------> 3
+restartPocliy: OnFailure
+
+
+schedule: h/30 * * * * ?	: To schedule the job to run in every 30 minutes.
