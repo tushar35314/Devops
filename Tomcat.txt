@@ -1,2 +1,35 @@
 Apache Tomcat
 ===============
+
+Web Server: 
+ Serverd static web pages over HTTP protocal. Soon web server evolved to have CGI capabilities. t means effectively launching a process on each web request to generate dynamic content
+ 
+Web Continer:
+  Is is basically a servlet continer. A servlet container is the component of a web server that interacts with java servlets. Servlet container is the runtime environment where your servlet run and it’s life cycle is maintained.
+ 
+Servlets:
+  In Java servlet container is the runtime environment where your servlet run and it’s life cycle is maintained.
+  - Servlet classes are loaded to container by it’s class loader dynamically either through lazy-loading or eager loading. 
+
+ServletContext:
+  - When the servlet container starts up, it will deploy and load all web-applications
+  - When a web application gets loaded, the servlet container will create the ServletContext once per application and keep in server’s memory
+  - The webapp’s web.xml will be parsed and every Servlet, Filter and Listener found in web.xml will be created once and kept in server’s memory as well. 
+  - When the servlet container shuts down, it will unload all web applications and the ServletContext and all Servlet, Filter and Listener instances will be trashed.
+  
+  
+  As per java docs, ServletContext defines a set of methods that a servlet uses to communicate with its servlet container. 
+  
+ServletRequest and ServletResponse  
+  The servlet container is attached to a webserver which listens on HTTP requests on a certain port number, which is usually 80. When a client sends a HTTP request, the servlet container will create new HttpServletRequest and HttpServletResponse objects and pass it through the methods of the already-created Filter and Servlet instances whose URL-pattern matches the request URL, all in the same thread
+  
+How is session managed?
+  When a client visits the web-app for the first time and/or the HttpSession is to be obtained for the first time by request.getSession(), then the servlet container will create it, generate a long and unique ID and stores it in the server's memory. 
+  The servlet container will also set a Cookie in the HTTP response with JSESSIONID as cookie name and the unique session ID as cookie value.
+  
+  As per the HTTP Cookies Specification, the client needs to send the cookie back to the server in subsequent request as long as the cookies are valid. 
+  
+  
+Tomcat Architecture
+---------------------
+Apache Tomcat is an open source webserver and servlet container. 
