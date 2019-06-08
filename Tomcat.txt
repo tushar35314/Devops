@@ -33,3 +33,40 @@ How is session managed?
 Tomcat Architecture
 ---------------------
 Apache Tomcat is an open source webserver and servlet container. 
+
+Standard Directory Layout
+--------------------------
+The following contents in your application's "document root" directory
+
+- *.html, *.jsp, etc. 
+	 The HTML and JSP pages, along with other files that must be visible to the client browser
+	 
+- /WEB-INF/web.xml
+	 The Web Application Deployment Descriptor for your application. This is an XML file describing the servlets and other components that make up your application, along with any initialization parameters and container-managed security constraints that you want the server to enforce for you.
+	 
+- /WEB-INF/classes/ 
+	  This directory contains any Java class files required for your application, including both servlet and non-servlet classes, that are not combined into JAR files. 
+	  
+- /WEB-INF/lib/  
+	 This directory contains JAR files that contain Java class files required for your application, such as third party class libraries or JDBC drivers.
+	 
+- /META-INF/context.xml
+	 This file can be used to define Tomcat specific configuration options, such as an access log, data sources, session manager configuration and more. This XML file must contain one Context element, which will be considered as if it was the child of the Host element corresponding to the Host to which the web application is being deployed. 
+	 
+Deployment With Tomcat
+----------------------
+In order to be executed, a web application must be deployed on a servlet container.  A web application can be deployed in Tomcat by one of the following approaches:
+
+- Copy unpacked directory hierarchy into a subdirectory in directory $CATALINA_BASE/webapps/. Tomcat will assign a context path to your application based on the subdirectory name you choose. 
+
+- Copy the web application archive file into directory $CATALINA_BASE/webapps/. When Tomcat is started, it will automatically expand the web application archive file into its unpacked form, and execute the application that way.
+
+Refer: https://tomcat.apache.org/tomcat-9.0-doc/appdev/processes.html#Test_Your_Web_Application
+
+ ****A Context is what Tomcat calls a web application.
+ 
+In order to configure a Context within Tomcat a Context Descriptor is required. The location for the Context Descriptor are
+- $CATALINA_BASE/conf/[enginename]/[hostname]/[webappname].xml
+- $CATALINA_BASE/webapps/[webappname]/META-INF/context.xml
+
+https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html
