@@ -1,1 +1,60 @@
-Sample
+Everything in Git is check-summed before it is stored and is then referred to by that checksum
+The mechanism that Git uses for this checksumming is called a SHA-1 hash
+GIT has mainly three states on which your file can reside: committed, modified and staged
+	- Committed means that the data is safely stored in your local database.
+	- Modified means that you have changed the file but have not committed it to your database yet
+	- Staged means that you have marked a modified file in its current version to go into your next commit snapshot.
+	
+First Time GIT Setup
+========================
+Git comes with a tool called git config that lets you get and set configuration variables. These variables can be stored in three different locations
+- /etc/gitconfig:  Values applied to every user on the system and their repositories
+- ~/.gitconfig or ~/.config/git/config: Specific to the user, and their repositories
+- config:: Specific to a repository 
+
+Your identity
+	git config --global user.name "John Doe"
+	git config --global user.email johndoe@example.com
+	
+Initializing a Repository in an Existing Directory
+====================================================
+Navigate to the project directory and type: git init
+This would add the .git directory. Next step would be to make the initial commit, hence follow these steps
+	- git add *.c
+	- git add LICENCE
+	- git commit -m "Adding the initial comments"
+
+Cloning an existing repository
+================================
+You can use the GIT CLONE command to clone a repository. 
+	$ git clone https://github.com/libgit2/libgit2
+	
+Checking the status of your file
+---------------------------------
+ Use the command git status, to check the status: 	$ git status
+ 
+Tracking a new file
+--------------------
+In order to begin tracking a new file, you use the git add command
+	$ git add README
+
+
+Staging Modified File
+------------------------
+$ git commit -m 'Commit Statement'
+
+To undo the changes done
+---------------------------
+To undo the stagged chnages, we can use the git reset command
+	$ git reset
+	
+Skipping the staged area
+---------------------------
+To skip the stagging area, you can use the git commit -am command
+	$ git commit -a -m 'added new benchmarks'
+	
+Removing the files
+--------------------
+	rm PROJECTS.md
+	
+
