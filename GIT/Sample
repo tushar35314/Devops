@@ -112,3 +112,39 @@ Tags
 Git supports two kinds of tags: lightweight and annotated. 
 
 A lightweight tag is a like a branch, it doesn't change. Its just a change to a specific pointer. 
+Annotated tags, however, are stored as full objects in the Git database. 
+
+Annotated Tags
+---------------
+The easiest way to create an annotated tag is to specify -a when you run the tag command.
+	$ git tag -a v1.4 -m "my version 1.4"
+	
+the '-m' option specifies a taging message. 
+
+Lightweight Tag
+-----------------
+Another way to tag commits is with a lightweight tag. This is basically the commit checksum stored in a file — no other information is kept
+The light weight tag is created without passing any option to the 'tag' command
+	$ git tag v1.4-lw
+	
+GIT Branching
+===============
+A branch in Git is simply a lightweight movable pointer to one of these commits. The default branch name in Git is master.
+
+Creating a branch
+------------------
+Creating a branch, creats a new pointerfor you to move around. In order to create a branch, we use the 'git branch' command. 
+$ git branch testing
+
+A sample git log command to display the creating of the branch
+$ git log --oneline --decorate
+
+Switching branches
+---------------------
+To switch to a existing branch, we use the 'git checkout' command. 
+$ git checkout testing
+
+To create a new branch and checkout the branch, we have the following command
+$ git checkout -b iss530
+
+ 
