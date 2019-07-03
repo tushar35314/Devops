@@ -1,0 +1,82 @@
+To add a user in EC2 User
+============================
+1: Setting up the Security Groups
+	Set the inbound rules, such that the source is set correctly 	
+2: Create the instance, one server and atleast one client machine
+
+Server end
+-----------
+- Create a user: useradd -d /home/test -m test
+- Login as the newly created user: su test
+- Create the ssh keys: ssh-keygen -t rsa
+- This will create the public and private key
+
+
+Client end
+------------
+- Create a user: uderadd -d /home/test -m test
+- Login as the newly created user: su test
+- create a folder named .ssh: mkdir .ssh
+- Change the mod of folder: chmod 700 .ssh
+- Create a file 'authorized_keys'
+- Add the server's public key to the authorized_keys
+- Change the mode of the file: chmod 600 authorized_keys
+
+To ssh (from the server's end)
+-------------------------------
+ssh test@172.31.30.144
+ssh test@ec2-13-127-21-44.ap-south-1.compute.amazonaws.com
+
+Setting up Ansible		https://medium.com/@khandelwal12nidhi/ansible-setup-on-aws-ec2-instance-d83fac41fcc8
+=============================================================================================================
+wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+rpm -ivh epel-release-latest-7.noarch.rpm
+yum repolist
+yum install ansible
+
+Ansible Commands
+----------------
+ansible all -m ping
+ansible webserver -m ping
+ansible all -m shell -a "uname -a;df -h"
+ansible webservers --list-hosts
+
+
+Sample Playbooks
+=====================
+1: Nginx.yml
+---
+- name: Install nginx
+  hosts: webserver
+  become: true
+
+  tasks:
+  - name: Add epel-release repo
+    yum:
+      name: epel-release
+      state: present
+
+  - name: Install nginx
+    yum:
+      name: nginx
+      state: present
+
+  - name: Insert Index Page
+    template:
+      src:  /etc/ansible/files/index.html
+      dest: /usr/share/nginx/html/index.html
+
+  - name: Start NGiNX
+    service:
+      name: nginx
+      state: started
+
+
+Installing Nginx
+================
+sudo yum install epel-release
+sudo yum repolist
+sudo yum install nginx -y
+sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx
