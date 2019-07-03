@@ -1,0 +1,112 @@
+https://httpd.apache.org/docs/2.4/install.html
+To determin the public ip: http://ipecho.net/plain
+
+
+Setting up Apache on Ubuntu
+------------------------------
+1: sudo apt-update
+2: sudo apt-install apache2
+3: sudo ufw app list	
+4: sudo apt install openssh-server		//To install openssh-server
+
+Ubuntu 18.04 servers can use the UFW firewall to make sure only connections to certain services are allowed.
+Different applications can register their profiles with UFW upon installation. These profiles allow UFW to manage these applications by name.
+OpenSSH, the service allowing us to connect to our server now, has a profile registered with UFW.
+
+Setting Up Virtual Hosts 
+------------------------
+- Create the directory of example.com, using the -p flag to create any necessary parent directory
+	sudo mkdir -p /var/www/example.com/html
+	
+- Assign ownership of the directory
+	sudo chown -R $USER:$USER /var/www/example.com/html
+	
+- Create a sample index.html page
+	sudo nano /var/www/example.com/html/index.html
+	
+- Make a new virtual host file at /etc/apache2/sites-available/example.com.conf
+
+<VirtualHost *:80>
+    ServerAdmin admin@example.com
+    ServerName example.com
+    ServerAlias www.example.com
+    DocumentRoot /var/www/example.com/html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+- Enable the file with a2ensite
+	sudo a2ensite example.com.conf
+
+- To test
+	sudo apache2ctl configtest
+	
+- Restart apache for the changes to reflect
+	sudo systemctl restart apache2
+	
+- To add the sites
+	sudo a2dissite example.com.conf
+	
+
+
+
+Apache HTTPD Server
+===================
+Apache is the most popular web server software on the Internet. 
+Apache can be used in many ways(e.g. as a proxy server or a load balancer) it is commonly used as a web server. 
+The protocol used to deliver web pages is HTTP
+
+HTTP is a client-server protocol; a client (usually a web browser) requests a resource (a web page) from a web server.The web server responds with the requested web page.
+
+Configuration Files
+-------------------
+The Apache HTTP Server is configured by placing directives in plain text configuration files. In ubuntu the Apache configuration files are stored in /etc/apache2 directory. 
+
+apache2.conf file: Apache2 configuration file that contains settings global to Apache is /etc/apache2/apache2.conf.
+conf-available: The /etc/apache2/conf-available directory contains additional configuration files that not associated with a particular module.
+conf-enabled: The /etc/apache2/conf-enabled directory holds symlinks to the files in /etc/apache2/conf-available.
+envvars: The Apache2 environment variables are set in the /etc/apache2/envvars file.
+magic: The /etc/apache2/magic file is a text file that contains instructions for determining MIME type based on the first few bytes of a file
+mods-available: The /etc/apache2/mods-available directory contains configuration files to both load modules and configure them
+mods-enabled: The /etc/apache2/mods-enabled directory holds symlinks to the files in /etc/apache2/mods-available
+ports.conf: The /etc/apache2/ports.conf configuration file stores the directives that determine the TCP ports Apache is listening on
+sites-available: The /etc/apache2/sites-available directory holds configuration files for Apache Virtual Hosts.
+site-enabled: The /etc/apache2/sites-enabled directory contains symlinks to the /etc/apache2/sites-available directory.
+
+
+
+sites-available directory
+-------------------------
+The /etc/apache2/sites-available directory holds configuration files for Apache Virtual Hosts. Virtual Hosts allow Apache to be configured for multiple sites that have separate configurations.
+
+Configuration files will contain the Directory directives specifying the location of the site and features you have set up for it.
+The 000-default.conf file contains configuration directives for the default Web server, such as the directory directives locating the default site at /var/www/html. 
+
+To make a site accessible, a link to its configuration file must be created in the /etc/apache2/sites-enabled directory. 
+To enable a site use the command 'a2ensite' command. 
+To disable a website use the command 'a2dissite' command.
+
+default virtual host
+---------------------
+Apache is configured with a single default virtual host which can be modified or used as-is if you have a single site, or used as a template for additional virtual hosts if you want to have multiple sites. 
+
+The configuration file that contains configuration directives for the default Web server is /etc/apache2/sites-available/000-default.conf.
+
+
+Creating a new virtual host
+----------------------------
+You can create your own virtual hosts to run multiple websites off of one web server. 
+The simplest way to create a new virtual host is to copy and rename the default file (/etc/apache2/sites-available/000-default.conf), and then modify the directives to point to your new website.
+
+
+DocumentRoot
+-------------
+The top-level directory structure that Apache looks at to find the content to serve. It will be set to individual directories under the /var/www directory. We will create a directory here for both of the virtual hosts we plan on making.
+
+In order to connect to a server, the client will first have to resolve the servername to an IP address - the location on the Internet where the server resides. Thus, in order for your web server to be reachable, it is necessary that the servername be in DNS.
+
+Typically, a document called index.html will be served when a directory is requested without a file name being specified. For example, if DocumentRoot is set to /var/www/html and a request is made for http://www.example.com/work/, the file /var/www/html/work/index.html will be served to the client.
+
+When httpd starts, it binds to some port and address on the local machine and waits for incoming requests.
+
+

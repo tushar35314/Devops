@@ -1,1 +1,150 @@
-Sample
+Everything in Git is check-summed before it is stored and is then referred to by that checksum
+The mechanism that Git uses for this checksumming is called a SHA-1 hash
+GIT has mainly three states on which your file can reside: committed, modified and staged
+	- Committed means that the data is safely stored in your local database.
+	- Modified means that you have changed the file but have not committed it to your database yet
+	- Staged means that you have marked a modified file in its current version to go into your next commit snapshot.
+	
+First Time GIT Setup
+========================
+Git comes with a tool called git config that lets you get and set configuration variables. These variables can be stored in three different locations
+- /etc/gitconfig:  Values applied to every user on the system and their repositories
+- ~/.gitconfig or ~/.config/git/config: Specific to the user, and their repositories
+- config:: Specific to a repository 
+
+Your identity
+	git config --global user.name "John Doe"
+	git config --global user.email johndoe@example.com
+	
+Initializing a Repository in an Existing Directory
+====================================================
+Navigate to the project directory and type: git init
+This would add the .git directory. Next step would be to make the initial commit, hence follow these steps
+	- git add *.c
+	- git add LICENCE
+	- git commit -m "Adding the initial comments"
+
+Cloning an existing repository
+================================
+You can use the GIT CLONE command to clone a repository. 
+	$ git clone https://github.com/libgit2/libgit2
+	
+Checking the status of your file
+---------------------------------
+ Use the command git status, to check the status: 	$ git status
+ 
+Tracking a new file
+--------------------
+In order to begin tracking a new file, you use the git add command
+	$ git add README
+
+
+Staging Modified File
+------------------------
+$ git commit -m 'Commit Statement'
+
+To undo the changes done
+---------------------------
+To undo the stagged chnages, we can use the git reset command
+	$ git reset
+	
+Skipping the staged area
+---------------------------
+To skip the stagging area, you can use the git commit -am command
+	$ git commit -a -m 'added new benchmarks'
+	
+Removing the files
+--------------------
+To remove a file from GIT, you have to remove it from the tracked files, and then commit it. The "git rm" command does that and also removes the file from your working directory. 
+	rm PROJECTS.md
+
+Git Diff Command
+--------------------
+The command compares what is in your working directory with what is in your staging area. 
+If you want to see what you have stagged that will go into the next commit, you can use the 'git diff --staged'
+
+Moving Files
+--------------
+If you want to remove a file in Git, you can run 
+	$ git mv file_from file_to
+	
+This is equivalent to 
+	$ mv README.md README
+	$ git rm README.md
+	$ git add README
+	
+Viewing Commit Histroy
+--------------------------
+By default, with no arguments, git log lists the commits made in that repository in reverse chronological order
+	$git log
+	
+A huge number and variety of options to the git log command are available. One of the most helpful option is the '-p'. That show the patch output. 
+One can limit the number of log entires by using a number. 
+	$ git log -p -2
+	
+The '-graph': Adds nice ASCII graph showing your branch and merge history. 
+
+Unstaging a stage file
+--------------------------
+To unstage a file we use the command 'git reset HEAD <filename>' The file in your working directory is untouched, in case you want to change the local directory. 
+We can use the '-hard' option. 
+
+Unmodifying a modified file 
+----------------------------
+To unmodify, revert back to what is looked as per the last commit. You can use the 'git checkout --<filename>' command.
+
+
+Working with Remote
+========================
+Remote repositories are versions of your project that are hosted on the Internet or network somewhere. 
+
+Showing your remote
+-------------------
+To see which remote servers you have configured, you can use the command 'git remote' command. 
+You can also specify -v, which shows you the URLs that Git has stored. 
+	$ git remote -v
+	
+To add a new remote Git repository as a shortname you can reference easily, run git remote add <shortname> <url>: 
+	$ git remote add pb https://github.com/paulboone/ticgit
+	
+Tags
+=====
+Git supports two kinds of tags: lightweight and annotated. 
+
+A lightweight tag is a like a branch, it doesn't change. Its just a change to a specific pointer. 
+Annotated tags, however, are stored as full objects in the Git database. 
+
+Annotated Tags
+---------------
+The easiest way to create an annotated tag is to specify -a when you run the tag command.
+	$ git tag -a v1.4 -m "my version 1.4"
+	
+the '-m' option specifies a taging message. 
+
+Lightweight Tag
+-----------------
+Another way to tag commits is with a lightweight tag. This is basically the commit checksum stored in a file — no other information is kept
+The light weight tag is created without passing any option to the 'tag' command
+	$ git tag v1.4-lw
+	
+GIT Branching
+===============
+A branch in Git is simply a lightweight movable pointer to one of these commits. The default branch name in Git is master.
+
+Creating a branch
+------------------
+Creating a branch, creats a new pointerfor you to move around. In order to create a branch, we use the 'git branch' command. 
+$ git branch testing
+
+A sample git log command to display the creating of the branch
+$ git log --oneline --decorate
+
+Switching branches
+---------------------
+To switch to a existing branch, we use the 'git checkout' command. 
+$ git checkout testing
+
+To create a new branch and checkout the branch, we have the following command
+$ git checkout -b iss530
+
+ 

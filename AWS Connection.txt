@@ -1,0 +1,52 @@
+To connect to the AWS instance through Putty
+- Open Puttygen and load the .pem files
+- Choose the type of key to be generated as RSA
+- Choose save private key 
+- Specify the name of the key followed by .ppk
+
+In order to connect to putty, 
+- In the host name box, add the following. user_name@public_dns_name
+
+Username is as follows
+For Amazon Linux 2 or the Amazon Linux AMI, the user name is ec2-user.
+For a Centos AMI, the user name is centos.
+For a Debian AMI, the user name is admin or root.
+For a Fedora AMI, the user name is ec2-user or fedora.
+For a RHEL AMI, the user name is ec2-user or root.
+For a SUSE AMI, the user name is ec2-user or root.
+For an Ubuntu AMI, the user name is ubuntu.
+Otherwise, if ec2-user and root don't work, check with the AMI provider.
+
+public_dns_name:  Public DNS Name, as indicated in the portal
+------------------------------------------------------------
+
+To set the host name, edit the files /etc/hosts and /etc/hostname, to add the hostnames
+
+Ex (in /etc/hosts)
+127.0.0.1 ansible-master			This line has been aded
+
+Ex (in /etc/hostname)
+#ip-172-31-95-125
+ansible-master
+
+Install Ansible
+----------------
+
+sudo apt update
+sudo apt install software-properties-common
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt update
+sudo apt install ansible
+
+User add: useradd -d /home/ansadm -m ansadm
+Sudo user: usermod -aG sudo test
+
+In order to generate the keys: ssh-keygen -t rsa (This needs to be done on the Control Machine)
+The keys will be geretared in /home/<username>/.ssh/id_rsa.pub
+
+Configure SSH Access to Ansible Host
+--------------------------------------
+
+
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-ansible-on-ubuntu-18-04
