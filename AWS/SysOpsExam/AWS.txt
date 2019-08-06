@@ -1,0 +1,50 @@
+https://d1.awsstatic.com/whitepapers/AWS_Cloud_Best_Practices.pdf
+
+Advantages of Cloud Computing
+================================
+1: IT Assets as Provisioned Resources
+2: Global, available and Scalable Capacity
+3: High Level Managed Service
+4: Build-it Security
+5: Architecting for cost
+
+Operating Models for AWS
+-------------------------
+1: Application that are migrated and maintain existing traditional operating model
+2: Solution that are refactored leverage higher level of automation of the operational process
+3: Solution that are re-architectured and designed for cloud operations
+
+Design Principles
+-------------------
+1: Scalability
+	There are two ways to scale an IT architecture : vertical and horizontally
+	
+	- Scaling Vertically
+		Scaling vertically takes place through an increase in the specifications of an individual resource, such as upgrading a server with a larger hard drive or a faster CPU.
+		With Amazon EC2, you can stop an instance and resize it upgraded instance type that has more CPU, Memory, I/O or Networking Capabilities.
+		This type of scaling is not always cost-efficent
+		
+	- Scaling Horizontally
+		Scaling Horizontally takes place through increase in the number of resources such as adding more hard drives to a storage array. 
+		Not all architectures are designed to distribute their workload to multiple resources
+		
+		Stateless Applications
+		When user or service interact with an application they will often perform a series of interaction that form a session. 
+		A session is unique data for users that persists between requests while they use the application.
+		A stateless application is an application that does not need knowledge of previous interactions and does not store session information
+		For example, an application that, given the same input, provides the same response to any end user, is a stateless application
+		
+		Distribute Load to Multiple Nodes
+		To distribute the workload to multiple nodes in your environment, you can choose either a push or a pull model.
+		
+		With push model you can use the Elastic Load Balancing (ELB) to distribute work load. 
+		- ELB routes incoming application requests across multiple EC2 instances. 
+		- While routing the traffic, a Network load Balancer operates at layer 4 of Open System Interconnections(OSI) model to handle millions of requests per second
+		
+		 With the adoption of container-based services, you can also use an Application Load Balancer.
+		- An Application Load Balancer provides Layer 7 of the OSI model and supports contentbased routing of requests based on application traffic.
+		- Alternatively, you can use Amazon Route 53 to implement a DNS round robin. 
+		
+		Instead of a load balancing solution, you can implement a pull model for asynchronous, event-driven workloads. 
+		- Tasks that need to be performed or data that needs to be processed can be stored as messages in a queue using Amazon Simple Queue Service (Amazon SQS) or as a streaming data solution
+		-  Multiple compute resources can then pull and consume those messages, processing them in a distributed fashion
