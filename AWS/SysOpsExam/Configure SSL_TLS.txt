@@ -1,0 +1,75 @@
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-ug.pdf
+https://aws.amazon.com/certificate-manager/
+
+Secure Sockets Layer/Transport Layer Security (SSL/TLS) creates an encrypted channel between a web server and web client that protects data in transit from being eavesdropped on. Web encryption is often referred to simply as SSL.
+
+Prerequisites
+--------------
+1: Launch an EBS-backed Amazon Linux 2 instance
+2: Configure your security groups to allow your instance to accept connection on
+	- SSH (22)
+	- HTTP (80)
+	- HTTPS (443)
+3: Install Apache Web Server
+4: To identify and authenticate websites, the TLS public key infrastructure (PKI) relies on the Domain Name System (DNS). To use your EC2 instance to host a public website, you need to register a domain name for your web server or transfer an existing domain name to your Amazon EC2 host. You can use the Amazon Route 53.
+
+Implementation
+---------------
+1: Enable TLS on the server
+This procedure takes you through the process of setting up TLS on Amazon Linux 2 with a self-signed digital certificate.
+
+	- Connect to your instance and confirm that HTTPD is running
+		$ sudo systemctl is-enabled httpd
+		$ sudo systemctl start httpd && sudo systemctl enable httpd
+	- Update the repository
+		$ sudo yum update -y
+	- Add TLS support by installing Apache module mod_ssl.
+		$ sudo yum install -y mod_ssl
+	- Now your instance should have the following files, to configure and secure server
+		. /etc/httpd/conf.d/ssl.conf
+			The configuration file for mod_ssl. It contains directives telling Apache where to find encryption keys and certificates
+		. /etc/pki/tls/certs/make-dummy-cert
+			A script to generate a self-signed X.509 certificate and private key for your server host. This certificate is useful for testing that Apache is properly set up to use TLS
+	- Run the script to generate the dummy certificate
+		$ sudo ./make-dummy-cert localhost.crt
+	
+	The file localhost.crt conatains both the self-signed certificate as well as the private key. 
+	- Open the /etc/httpd/conf.d/ssl.conf file and comment out the following line
+		SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+	Restart Apache
+		$ sudo systemctl restart httpd
+
+2: Obtaining a CA-Signed Certificate
+	You can use the following process to generate a CA certificate
+	• Generate a certificate signing request (CSR) from a private key
+	• Submit the CSR to a certificate authority (CA)
+	• Obtain a signed host certificate
+	• Configure Apache to use the certificate
+	
+	To obtain a CA-Signed Certificate
+	-------------------------------------
+	
+	You would require registered and hosted DNS Server
+	
+	- Connect to the instance and navigate to the /etc/pki/tls/private/. This is the directory where you store the server's private key for TLS. 
+	- (Optional) Generate a new private key, using any one of the following
+		. Create a defaukt RSA host key.
+			$ sudo openssl genrsa -out custom.key
+		. Create a stronger RSA key with a bigger modulus
+			$ sudo openssl genrsa -out custom.key 4096
+	- Make sure that the new private key has highly restrictive ownership and permission (owner=root, group=root, read/write for owner only)
+	- Create a CSR using your preferred key 
+		$ sudo openssl req -new -key custom.key -out csr.pem
+	- The resulting csr.pem file contains your public key, your digital signature of oublic key and metadata thaat you entered.
+	- Submit the CSR to the CA. 
+	- After the request has been approved, you shall receive a new host certificate signed by the CA
+	- Place the new CA-signed certificate and any intermediate certificates in the /etc/pki/tls/certs directory.
+	- Place the private key that you used to create the CSR in the /etc/pki/tls/private/ directory
+	- Edit /etc/httpd/conf.d/ssl.conf to reflect your new certificate and key file
+		a: Provide the path and file name of the CA-signed host certificate in Apache's SSLCertificateFile directive
+			SSLCertificateFile /etc/pki/tls/certs/custom.crt
+		b: If you received an intermediate certificate file
+			SSLCACertificateFile /etc/pki/tls/certs/intermediate.crt
+	- Save /etc/httpd/conf.d/ssl.conf and restart Apache.
+		$ sudo systemctl restart httpd
+
