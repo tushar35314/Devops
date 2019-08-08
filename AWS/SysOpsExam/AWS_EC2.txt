@@ -1,0 +1,126 @@
+Amazon Elastic Compute Cloud
+==============================
+https://docs.aws.amazon.com/ec2/?id=docs_gateway
+
+
+Pricing in AWS
+---------------
+1: On-Demand Instance
+	Pay for the instances that you use by the second, with no long-term commitments or upfront payments
+	
+2: Reserved Instance
+	Make a low, one-time, up-front payment for an instance, reserve it for a one- or three-year term.
+	
+3: Spot Instance
+	Request unused EC2 instances, which can lower your costs significantly.
+
+Instance and AMIs
+-----------------
+An amazon machine image (AMI) is a template that contains the software configurations. From an AMI you can launch an instance which is a copy of the AMI running as virtual server. 
+
+Storage for your instance
+---------------------------
+The root device for your instance contains the image used to boot the instance. 
+
+Your instance may include local storage volumes, known as instance store volumes, which you can configure at launch time with block device mapping.
+After these volumes have been added to and mapped on your instance, they are available for you to mount and use. If your instance fails, or if your instance is stopped or terminated, the data on these volumes is lost; therefore, these volumes are best used for temporary data. 
+
+Security Best Practices
+-------------------------
+. Use AWS Identity and Access Management (IAM) to control access to your AWS resources, including your instances
+. Restrict access by only allowing trusted hosts or networks to access ports on your instance.
+. Review the rules in your security groups regularly, and ensure that you apply the principle of least privilege—only open up permissions that you require.
+. Disable password based logins
+
+AMIs
+-----
+All AMIs are categorized as 
+1: Backed by Amazon EBS
+		Root device is an Amazon EBS Volume
+2: Backed by instance store
+		Root device is an instance store volumn created from a template stored in Amazon S3
+
+To find the regions through the AWS CLI, use the command: aws ec2 describe-regions
+
+Migrating an Instance to another Availability Zone
+---------------------------------------------------
+The migration process involves creating an AMI from the original instance, launching an instance in the new Availability Zone, and updating the configuration of the new instance
+
+- Create an AMI from the instance.
+- If you need to preserve the private IPv4 address of the instance, you must delete the subnet in the current Availability Zone and then create a subnet in the new Availability Zone with the same IPv4 address range as the original subnet.
+- Launch an instance from the AMI that you just created, specifying the new Availability Zone or subnet
+- If the original instance has an associated Elastic IP address, associate it with the new instance
+- Terminate the original instance
+
+Amazon EC2 Root Device Volume
+-------------------------------
+When you launch an instance, the root device volume contains the image used to boot the instance.
+You can choose between AMIs backed by Amazon EC2 instance store and AMIs backed by Amazon EBS
+Recommend that you use AMIs backed by Amazon EBS, because they launch faster and use persistent storage.
+
+Root Device Sorage Concepts
+=============================
+
+Instance Store-backed Instance
+-------------------------------
+Instances that use instance stores for the root device automatically have one or more instance store volumes available, with one volume serving as the root device volume. When an instance is launched, the image that is used to boot the instance is copied to the root volume.
+
+Any data on the instance store volumes persists as long as the instance is running, but this data is deleted when the instance is terminated or if it gets failed.
+
+Amazon EBS Backed Instance
+---------------------------
+Instances that use Amazon EBS for the root device automatically have an Amazon EBS volume attached.
+When you launch an Amazon EBS-backed instance, we create an Amazon EBS volume for each Amazon EBS snapshot referenced by the AMI you use.
+
+An Amazon EBS-backed instance can be stopped and later restarted without affecting data stored in the attached volumes.
+
+By default, the root device volume for an AMI backed by Amazon EBS is deleted when the instance terminates. To change the default behavior, set the DeleteOnTermination attribute to false using a block device mapping
+
+Setting up with Amazon EC2
++++++++++++++++++++++++++++
+
+Create a Key Pair
+------------------
+The key-pair is specific to a specific region. Procedure to create a key-pair. 
+1: Sign in to AWS
+2: From the dashboard, choose EC2 to open the Amazon EC2 console
+3: In the navigation pane, under Network & Security, choose Key Pairs. 
+4: Choose create a key pair
+5: Provide the name of the Kay-pair.
+6: The private key is automatically downloaded. 
+
+To connect to your instance using the key pair
+-----------------------------------------------
+
+1: Downaload and install Putty
+2: Start Puttygen
+3: Under type of key to generate, choose RSA
+4: Browse to the location of the .pem file
+5: Choose Private key
+6: Specify the same name 
+
+Create a Virtual Private Cloud (VPC)
+-------------------------------------
+Amazon VPC enables you to lunch AWS resources into a virtual network that you have defined known as virtual private cloud. 
+1: Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
+2: Select the region
+3: On VPC dashboard, choose Lunch VPC Wizard
+4: Choose VPC with Single Public Subnet, from the Select VPC configuration page
+5: Provide a friendly name and leave the other field as default. 
+
+For more on VPC, see https://docs.aws.amazon.com/vpc/latest/userguide/
+
+Create s Security Group
+-------------------------
+Security groups acts as a firewall for the associated image, controlling both inbound and outbound traffic at the instance level. 
+
+You shall need the IPv4 address of your local computer.
+1: Open the Amazon EC2 console at https://console.aws.amazon.com/ec2/.
+2: Select a region wherein you need to create the security groups
+3: Choose Security Group in the navigation pane
+4: Create a Security Group
+5: In the VPC list, select you VPC. The default VPC is indicated by *
+6: In the inbound section, create the following rules
+	- Choose HTTP from type list and make sure that the source is set to anywhere (0.0.0.0/0)
+	- Choose HTTPS from type list and make sure that the source is set to anywhere (0.0.0.0/0)
+
