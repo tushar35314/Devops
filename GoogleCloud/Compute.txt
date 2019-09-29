@@ -1,0 +1,21 @@
+https://cloud.google.com/compute/docs/
+
+Procedure to create a Linux VM
+--------------------------------
+1: Navigate to the project selection page and select a project. 
+2: Make sure that the billing is enabled.
+3: Navigate to the VM Instance
+4: Click on Create Instance
+5: Specify the name of the instance
+6: Optionally chnage zone of the instance
+7: Select the machine configuration
+8: Click on the create to create your VM
+
+Creating New SSH keys
+---------------------
+1: Open the terminal and use the following command to create your ssh keys using the ssh-keygen command. 
+ssh-keygen -t rsa -f ~/.ssh/[KEY_FILENAME] -C [USERNAME]
+
+Where
+Filenames: is the name of the key
+Username: The name of the user for which the key is created
