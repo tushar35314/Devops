@@ -1,0 +1,6 @@
+Create a VPC
+-----------------
+- Open Amazon VPC Console at https://console.aws.amazon.com/vpc
+- Select Launch VPC Wizard
+- Choose VPC with a Single Public Subnet
+- 

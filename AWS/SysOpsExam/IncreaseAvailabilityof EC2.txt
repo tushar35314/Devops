@@ -1,0 +1,25 @@
+Increase the Availability of Your Application on Amazon EC2
+============================================================
+You can launch multiple EC2 instances from your AMI and then use Elastic Load Balancing to distribute incoming traffic. Placing your instance in multiple availability zone improves the fault tolerance in your application. If one AZ experiences an outage, traffic is routed to the other AZ.
+
+You can use the Amazon EC2 Scaling to maintain a minimum number of running instance for your application at all times. Amazon EC2 Auto Scaling can detect when your instance or application is unhealthy and replace it automatically to maintain the availability of your application
+
+You can also use the Amazon AutoScaling to scale EC2 capacity up and down automatically based on the demand, using crieteria that you specify. 
+
+Requirements
+--------------
+1: Create a virtual private cloud (VPC) with one public subnet in one or more Availability Zone
+2: Lunch the instance in Virtual Private Cloud
+3: Connect to the instance and customise it
+4: Tested you appplication on the instance to ensure that instance is configured properly. 
+5: Created a custome Amazon Machine Image from your instance 
+6: Terminate the instance if you no longer need it
+7: Created an IAM role that grants your application the access to AWS it needs.
+
+
+Implementation
+---------------
+1: Open Amazon EC2 console 
+2: On the navigation pane, choose Load Balancer
+3: Choose create Load balancer
+4: For application load balancer, choose create 
