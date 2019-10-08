@@ -6,9 +6,22 @@ sudo apt-get install apt-transport-https ca-certificates
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update
-apt-cache policy docker-ce
-sudo apt-get install -y docker-ce
-sudo systemctl status docker
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+List out the available version in your repository
+$ apt-cache madison docker-ce
+
+To install specific version of Docker
+$ sudo apt-get install docker-ce=<VERSION_STRING> docker-ce-cli=<VERSION_STRING> containerd.io
+
+To check the version of Docker installed
+$ sudo docker --version
+
+To check the Docker is installed properly
+sudo docker run hello-world
+
+Location where Docker gets installed 
+/var/lib/docker
 
 
 Second Method
