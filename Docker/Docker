@@ -37,3 +37,5 @@ sudo apt-get install docker-ce
 
 To fix the error : Could not get lock /var/lib/dpkg/lock - ope
 sudo rm /var/lib/apt/lists/lock
+
+Sample
