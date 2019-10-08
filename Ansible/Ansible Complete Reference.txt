@@ -1,0 +1,152 @@
+Ansible Complete Reference
+=============================
+
+Ansible uses SSH to connect between nodes
+----------------------------------------
+#Setting Up SSH Command
+$ sudo apt-get install openssh-server
+
+#Generating SSH Key 
+$ ssh-keygen
+
+#Copy the SSH Key on the Hosts
+$ ssh-copy-id hostname
+
+#Check the SSH Connection 
+$ ssh <nodeName>
+
+
+Installing Ansible
+---------------------------
+#Add Ansible repository 
+$ sudo apt-add-repository ppa:ansible/ansible
+
+#Run the update command 
+$ sudo apt-get update
+
+#Install Ansible package 
+$ sudo apt-get install ansible
+
+#Check Ansible Version
+$ ansible –version
+
+Host Setup and Connection Check
+-----------------------------------
+#Set up hosts by editing the hosts' file in the Ansible directory
+$ sudo nano /etc/ansible/hosts
+
+#To check the connection to hosts
+#Change your directory to /etc/Ansible 
+$ cd /etc/ansible
+
+#Ansible’s ping module allows you to check whether Ansible is connecting to hosts 
+$  ansible –m ping <hosts>
+
+Ansible Host Pattern
+---------------------
+all:				All hosts in inventory
+*:					All hosts in inventory
+ungrouped:			All hosts in an inventory not appearing within a group
+webserver:!moscow	Only hosts in the webserver group, not also in group moscow
+
+
+Location of the default hosts file : $/etc/ansible/hosts
+To define a location in the inventroy : -i 
+
+Example: 
+[webserver]
+10.10.x.y
+10.10.a.b
+
+Ad-Hoc Command
+---------------
+Ad-Hoc commands are quick commands which are used to perform the actions, that won’t be saved for later. Some of the tasks that can be performed using Adhoc command
+* Parallelism and Shell Command
+* File Transfer
+* Managing Package
+* Deploying from Source Control
+
+Parallelism
+-------------
+To set up SSh agent
+$ ssh-agent bash
+$ ssh-add ~/.ssh/id_rsa
+
+To use SSH with a password instead of keys, you can use the (--ask-pass)
+$ ansible europe -a "/sbin/reboot" -f 20
+
+f: parallelism
+a: shell command
+
+File Transfer
+--------------
+#Transfer a file directly to many servers
+$ ansible europe -m copy -a "src=/etc/hosts dest=/tmp/hosts"
+
+#To change the ownership and permissions on files 
+$ ansible webservers -m file -a "dest=/srv/foo/a.txt mode=600"
+$ ansible webservers -m file -a "dest=/srv/foo/b.txt mode=600 owner=example group=example"
+
+#To create directories 
+$ ansible webservers -m file -a "dest=/path/to/c mode=755 owner=example group=example state=directory"
+
+#To delete directories (recursively) and delete files
+$ ansible webservers -m file -a "dest=/path/to/c state=absent"
+
+Manage Package
+--------------
+#To ensure that a package is installed, but doesn’t get updated
+$ ansible webservers -m apt -a "name=acme state=present"
+
+#To ensure that a package is installed to a specific version
+$ ansible webservers -m apt -a "name=acme-1.5 state=present"
+
+#To ensure that a package at the latest version
+$ ansible webservers -m apt -a "name=acme state=latest"
+
+#To ensure that a package is not installed
+$ ansible webservers -m apt -a "name=acme state=absent"
+
+
+Manage Service
+-------------
+#To ensure a service is started on all web servers
+$ ansible webservers -m service -a "name=httpd state=started"
+
+#To restart a service on all web servers
+$ ansible webservers -m service -a "name=httpd state=restarted"
+
+#To ensure a service is stopped
+$ ansible webservers -m service -a "name=httpd state=stopped
+
+Playbook
+--------
+Example 
+---
+- hosts: webservers
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+
+  tasks:
+  - name: ensure apache is at the latest version
+    apt: name=httpd state=latest
+  - name: write the apache config file
+    template: src=/srv/httpd.j2 dest=/etc/httpd.conf
+    notify:
+    - restart apache
+  - name: ensure apache is running (and enable it at boot)
+    service: name=httpd state=started enabled=yes
+
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted
+	  
+	  
+Ansible Roles
+-------------
+Roles are a collection of tasks, which can be moved form one playbook to another. 
+To create a directory role, we can use the following
+	$ ansible-galaxy init role1
+	
