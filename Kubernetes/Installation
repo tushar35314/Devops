@@ -84,3 +84,16 @@ instal iginix in kubernets
 kubectl apply -f https://k8s.io/examples/application/nginx-app.yaml
 kubectl get deployments
 kubectl get pods
+
+
+
+
+
+
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+apt-get install software-properties-common
+apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+set-hostname kube-master-node
+kubeadm join 10.160.0.3:6443 --token f5q4c5.yaqubtm6tabt24ic \
+    --discovery-token-ca-cert-hash sha256:8472a55c9e865d88712012ab85d471744b537ccf0ade2f7066eb1aa40c7db626
